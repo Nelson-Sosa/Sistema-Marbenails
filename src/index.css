@@ -1,0 +1,206 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARBENAILS — Global Styles
+   Tailwind CSS v4 (CSS-first configuration)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts — Inter (must be first @import) ────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Tailwind v4 import ─────────────────────────────────────────────────── */
+@import "tailwindcss";
+
+/* ── Tailwind v4 Theme Configuration ───────────────────────────────────── */
+@theme {
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Brand Color Palette ── */
+  /* Dusty Rose (primary brand) — sophisticated, muted, elegant */
+  --color-rose-50: #fdf2f6;
+  --color-rose-100: #fce4ea;
+  --color-rose-200: #f7c9d5;
+  --color-rose-300: #f0a8bc;
+  --color-rose-400: #e088a2;
+  --color-rose-500: #d4708b;
+  --color-rose-600: #b85872;
+  --color-rose-700: #98445a;
+  --color-rose-800: #7a3446;
+  --color-rose-900: #5e2836;
+
+  /* Muted Pink (secondary accent) */
+  --color-pink-400: #e8a0b8;
+  --color-pink-500: #d488a0;
+  --color-pink-600: #b86e88;
+
+  /* Soft Violet (tertiary accent) */
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-200: #ddd6fe;
+  --color-violet-300: #c4b5fd;
+  --color-violet-400: #a99ae8;
+  --color-violet-500: #9386d8;
+  --color-violet-600: #7c6ec4;
+  --color-violet-700: #6558a8;
+
+  /* Slate (backgrounds & surfaces) */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  /* Surface — subtle layer between background and cards for depth */
+  --color-surface: #070c17;
+
+  /* Semantic colors */
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+
+  /* Border radius tokens */
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+
+  /* Animation */
+  --animate-spin: spin 1s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in: fadeIn 0.2s ease-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-slide-down: slideDown 0.2s ease-out;
+  --animate-slide-in-left: slideInLeft 0.3s ease-out;
+}
+
+/* ── Custom Keyframes ───────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
+}
+
+/* Dropdown fade + scale — used by DropdownPortal */
+@keyframes dropdownFadeScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Base Reset & Global Styles ─────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-slate-950);
+    color: var(--color-slate-100);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus visible styles — accessibility */
+  :focus-visible {
+    outline: 2px solid var(--color-rose-500);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar styling — dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-slate-950);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-slate-700);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-slate-600);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-rose-500) 25%, transparent);
+    color: var(--color-rose-200);
+  }
+}
+
+/* ── Utility Classes ────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    background: color-mix(in srgb, var(--color-slate-900) 80%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, white 8%, transparent);
+  }
+
+  /* Brand gradient — sophisticated dusty rose → soft violet */
+  .gradient-brand {
+    background: linear-gradient(135deg, var(--color-rose-500), var(--color-violet-500));
+  }
+
+  /* Text gradient */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, var(--color-rose-400), var(--color-violet-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Subtle brand glow — used for shadows on premium elements */
+  .shadow-brand-subtle {
+    box-shadow: 0 4px 20px -8px color-mix(in srgb, var(--color-rose-500) 20%, transparent);
+  }
+
+  /* Animate utilities */
+  .animate-fade-in       { animation: var(--animate-fade-in); }
+  .animate-slide-up      { animation: var(--animate-slide-up); }
+  .animate-slide-down    { animation: slideDown 0.2s ease-out; }
+  .animate-slide-in-left { animation: var(--animate-slide-in-left); }
+  .animate-badge-pulse   { animation: badgePulse 2s ease-in-out infinite; }
+}

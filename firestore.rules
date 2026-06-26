@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // ─── USUARIOS ───
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      
+      allow create: if isOwner(userId) && request.resource.data.role == "user";
+      
+      // El usuario puede actualizar su perfil, pero NO puede cambiarse el rol ni el estado de verificación
+      // Usamos .get() para evitar errores si los campos no existen en usuarios viejos
+      allow update: if isOwner(userId) &&
+        request.resource.data.get('role', 'user') == resource.data.get('role', 'user') &&
+        request.resource.data.get('phoneVerified', false) == resource.data.get('phoneVerified', false) &&
+        request.resource.data.get('uid', '') == resource.data.get('uid', '') &&
+        request.resource.data.get('email', '') == resource.data.get('email', '');
+
+      // El admin tiene control total
+      allow write: if isAdmin();
+    }
+
+    // ─── CLIENTES ───
+    match /clients/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─── SETTINGS ───
+    match /settings/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ─── SERVICIOS (Catálogo) ───
+    match /services/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ─── CATEGORÍAS DE SERVICIOS ───
+    match /serviceCategories/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ─── TURNOS ───
+    match /appointments/{docId} {
+      // Admin tiene control total sobre todos los turnos
+      allow read, write: if isAdmin();
+
+      // Usuario: puede leer TODOS los turnos (necesario para verificar disponibilidad en el frontend)
+      allow read: if isAuthenticated();
+
+      // Usuario: solo puede crear turnos a su propio nombre
+      allow create: if isAuthenticated() && request.resource.data.clientId == request.auth.uid;
+
+      // Usuario: solo puede cancelar (status='cancelled') sus propios turnos.
+      allow update: if isAuthenticated()
+        && resource.data.clientId == request.auth.uid
+        && request.resource.data.status == 'cancelled';
+    }
+
+    // ─── INGRESOS ───
+    match /income/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── HISTORIAL DE FIDELIDAD ───
+    match /loyaltyHistory/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}
