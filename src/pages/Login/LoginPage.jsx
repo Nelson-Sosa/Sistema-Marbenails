@@ -109,9 +109,9 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
-      {/* ── Left panel: decorative (desktop only) ─────────────────────────── */}
-      <div className="relative hidden w-1/2 overflow-hidden lg:flex lg:flex-col lg:items-center lg:justify-center">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-slate-950">
+      {/* ── Branding Panel (Top on mobile, Left on desktop) ─────────────────────────── */}
+      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12 lg:w-1/2 lg:py-0">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-rose-600/20 via-pink-600/10 to-slate-950" />
 
@@ -120,30 +120,35 @@ function LoginPage() {
         <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-pink-500/10 blur-3xl" />
         <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/5 blur-2xl" />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center px-8">
-          <img
-            src={LogoSrc}
-            alt="Marbenails"
-            className="mb-6 w-40 h-auto object-contain"
-          />
-          <h1 className="text-3xl font-bold text-white">{APP_NAME}</h1>
+        {/* Content - Branding Block */}
+        <div 
+          className="relative z-10 flex flex-col items-center justify-center gap-3 transition-transform duration-300 hover:scale-[1.02] md:gap-4"
+          style={{ animation: 'fade-in-scale 400ms ease-out forwards' }}
+        >
+          {/* Logo App-Icon Container */}
+          <div className="relative flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem] bg-white shadow-[0_8px_32px_rgba(225,29,72,0.2)] md:rounded-[2rem] 
+                          w-[90px] h-[90px] 
+                          sm:w-[100px] sm:h-[100px] 
+                          md:w-[120px] md:h-[120px] 
+                          lg:w-[140px] lg:h-[140px] 
+                          xl:w-[160px] xl:h-[160px]">
+            {/* The image is scaled up to crop excessive white margins natively without distorting */}
+            <img
+              src={LogoSrc}
+              alt={`${APP_NAME} Logo`}
+              className="h-full w-full max-w-none object-contain scale-[1.35] transition-transform duration-500"
+            />
+          </div>
+          {/* Brand Name */}
+          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+            {APP_NAME}
+          </h1>
         </div>
       </div>
 
       {/* ── Right panel: Login form ────────────────────────────────────────── */}
-      <div className="flex w-full flex-col items-center justify-center px-6 lg:w-1/2 lg:px-12">
+      <div className="flex w-full flex-col items-center justify-center px-6 pb-12 pt-4 lg:w-1/2 lg:px-12 lg:py-0">
         <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <div className="mb-8 flex flex-col items-center lg:hidden">
-            <img
-              src={LogoSrc}
-              alt="Marbenails"
-              className="mb-3 w-20 h-auto object-contain"
-            />
-            <h1 className="text-xl font-bold text-white">{APP_NAME}</h1>
-          </div>
-
           {/* Form header */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-white">Iniciar sesión</h2>
