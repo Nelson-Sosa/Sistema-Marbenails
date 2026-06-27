@@ -148,66 +148,74 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
               <div className="flex flex-col gap-3 px-6 py-5">
                   {activeServices.map((svc, i) => {
                   return (
-                    <motion.div
-                      key={svc.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, delay: i * 0.04, ease: 'easeOut' }}
-                      onMouseEnter={() => setHoveredService(svc.id)}
-                      onMouseLeave={() => setHoveredService(null)}
-                      onClick={() => !isAdmin && onBook(svc.id)}
-                      className={`flex items-center gap-3 rounded-2xl border px-4 sm:px-5 py-4 transition-all duration-200 cursor-default ${
-                        isAdmin ? '' : 'cursor-pointer'
-                      } ${
-                        hoveredService === svc.id
-                          ? 'border-rose-500/25 bg-white/[0.04] shadow-md shadow-rose-500/5 -translate-y-0.5'
-                          : 'border-white/[0.04] bg-white/[0.015]'
-                      }`}
-                    >
-                      {/* Name + badges */}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-base font-semibold text-white">{svc.name}</p>
-                        {svc.description && (
-                          <p className="mt-1 text-sm text-slate-500 line-clamp-1">{svc.description}</p>
-                        )}
-                      </div>
-
-                      {/* Duration badge */}
-                      <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 text-xs text-slate-400">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>{svc.duration} min</span>
-                      </div>
-
-                      {/* Price */}
-                      <p className="text-sm sm:text-base font-bold text-emerald-400 whitespace-nowrap text-right drop-shadow-sm">
-                        {formatCurrency(svc.price)}
-                      </p>
-
-                      {/* Action */}
-                      {isAdmin ? (
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Badge variant={svc.active ? 'success' : 'default'} size="sm" dot>
-                            {svc.active ? 'Activo' : 'Inactivo'}
-                          </Badge>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); onEditService(svc) }}
-                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-all duration-200 hover:bg-white/[0.06] hover:text-white"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </button>
+                      <motion.div
+                        key={svc.id}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, delay: i * 0.04, ease: 'easeOut' }}
+                        onMouseEnter={() => setHoveredService(svc.id)}
+                        onMouseLeave={() => setHoveredService(null)}
+                        onClick={() => !isAdmin && onBook(svc.id)}
+                        className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 rounded-2xl border px-4 sm:px-5 py-4 transition-all duration-200 cursor-default ${
+                          isAdmin ? '' : 'cursor-pointer'
+                        } ${
+                          hoveredService === svc.id
+                            ? 'border-rose-500/25 bg-white/[0.04] shadow-md shadow-rose-500/5 -translate-y-0.5'
+                            : 'border-white/[0.04] bg-white/[0.015]'
+                        }`}
+                      >
+                        {/* Name + badges */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-base font-semibold text-white">{svc.name}</p>
+                          {svc.description && (
+                            <p className="mt-1 text-sm text-slate-500 line-clamp-1">{svc.description}</p>
+                          )}
+                          {/* Duration (Mobile) */}
+                          <div className="flex sm:hidden items-center gap-1.5 mt-2 text-xs text-slate-400">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{svc.duration} min</span>
+                          </div>
                         </div>
-                      ) : (
-                        <motion.button
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.96 }}
-                          onClick={() => onBook(svc.id)}
-                          className="relative flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 px-4 sm:px-5 py-2 text-sm font-medium text-white shadow-lg shadow-rose-500/25 transition-all duration-250 hover:shadow-xl hover:shadow-rose-500/35"
-                        >
-                          <span className="hidden sm:inline">Reservar</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </motion.button>
-                      )}
-                    </motion.div>
+
+                        {/* Duration badge (Desktop) */}
+                        <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 text-xs text-slate-400 shrink-0">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>{svc.duration} min</span>
+                        </div>
+
+                        {/* Price + Action Row */}
+                        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-white/[0.04] sm:border-0">
+                          {/* Price */}
+                          <p className="text-sm sm:text-base font-bold text-emerald-400 whitespace-nowrap drop-shadow-sm">
+                            {formatCurrency(svc.price)}
+                          </p>
+
+                          {/* Action */}
+                          {isAdmin ? (
+                            <div className="flex items-center gap-2 shrink-0">
+                              <Badge variant={svc.active ? 'success' : 'default'} size="sm" dot>
+                                {svc.active ? 'Activo' : 'Inactivo'}
+                              </Badge>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onEditService(svc) }}
+                                className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-all duration-200 hover:bg-white/[0.06] hover:text-white"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <motion.button
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.96 }}
+                              onClick={() => onBook(svc.id)}
+                              className="relative flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 px-4 sm:px-5 py-2 text-sm font-medium text-white shadow-lg shadow-rose-500/25 transition-all duration-250 hover:shadow-xl hover:shadow-rose-500/35 shrink-0"
+                            >
+                              <span>Reservar</span>
+                              <ArrowRight className="h-4 w-4" />
+                            </motion.button>
+                          )}
+                        </div>
+                      </motion.div>
                   )
                 })}
               </div>
