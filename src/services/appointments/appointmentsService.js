@@ -12,7 +12,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 import { db } from '@/firebase/config'
-import { COLLECTIONS, APPOINTMENT_STATUS } from '@/constants/app'
+import { COLLECTIONS, APPOINTMENT_STATUS, DEFAULT_PROFESSIONAL_ID } from '@/constants/app'
 import { NOTIFICATION_TYPES } from '@/constants/notifications'
 import { createIncomeEntry } from '@/services/income/incomeService'
 import { createNotification } from '@/services/notifications/notificationsService'
