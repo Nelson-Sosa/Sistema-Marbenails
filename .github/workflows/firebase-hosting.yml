@@ -25,6 +25,9 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Force unique release version
+        run: date +%s > dist/build-version.txt
+
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
