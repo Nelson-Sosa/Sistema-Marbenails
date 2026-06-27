@@ -80,6 +80,14 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // ─── NOTIFICACIONES ───
+    match /notifications/{docId} {
+      // El admin puede ver, marcar como leídas, etc.
+      allow read, write: if isAdmin();
+      // Los usuarios autenticados pueden generar notificaciones (ej. al reservar un turno)
+      allow create: if isAuthenticated();
+    }
+
     // ─── HISTORIAL DE FIDELIDAD ───
     match /loyaltyHistory/{docId} {
       allow read: if isAuthenticated();
