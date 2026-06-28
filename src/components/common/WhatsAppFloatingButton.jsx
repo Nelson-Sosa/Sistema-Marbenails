@@ -10,21 +10,21 @@ const getWhatsAppMessage = (pathname) => {
   // Se pueden agregar nuevos casos ('/servicios', '/reservas', etc.) sin tocar el render.
   switch (pathname) {
     case '/':
-      return '💅 ¡Hola!\n\nMe gustaría obtener información sobre los servicios de MarbeNails y conocer la disponibilidad para agendar un turno.\n\nMuchas gracias. 😊'
+      return '¡Hola!\n\nMe gustaría obtener información sobre los servicios de MarbeNails y conocer la disponibilidad para agendar un turno.\n\nMuchas gracias.'
     
     // Ejemplos para futuras rutas:
     // case '/servicios':
-    //   return 'Hola 😊\n\nMe gustaría conocer más sobre sus servicios.'
+    //   return 'Hola\n\nMe gustaría conocer más sobre sus servicios.'
     // case '/reservas':
-    //   return 'Hola 😊\n\nMe gustaría agendar un turno.'
+    //   return 'Hola\n\nMe gustaría agendar un turno.'
     // case '/contacto':
-    //   return 'Hola 😊\n\nTengo una consulta.'
+    //   return 'Hola\n\nTengo una consulta.'
     // case '/promociones':
-    //   return 'Hola 😊\n\nMe interesan sus promociones.'
+    //   return 'Hola\n\nMe interesan sus promociones.'
 
     default:
       // Mensaje por defecto en caso de no coincidir con las rutas anteriores
-      return '💅 ¡Hola!\n\nMe gustaría obtener información sobre los servicios de MarbeNails y conocer la disponibilidad para agendar un turno.\n\nMuchas gracias. 😊'
+      return '¡Hola!\n\nMe gustaría obtener información sobre los servicios de MarbeNails y conocer la disponibilidad para agendar un turno.\n\nMuchas gracias.'
   }
 }
 
