@@ -158,11 +158,8 @@ export default function WeeklyAgendaView() {
     []
   )
 
-  // Hour-boundary slots for the time gutter labels
-  const hourSlots = useMemo(
-    () => timeSlots.filter(s => s.startMin % 60 === 0),
-    [timeSlots]
-  )
+  // Nota: timeSlots se usa directamente en la columna horaria.
+  // Si cambia SLOT_INTERVAL (ej: 15, 20, 30), las etiquetas se actualizan automáticamente.
 
   const totalHeight = TOTAL_SLOTS * rowHeight
 
@@ -330,16 +327,28 @@ export default function WeeklyAgendaView() {
 
             {/* ── Scrollable Body ───────────────────────────────────────── */}
             <div className="flex relative">
-              {/* Time gutter (sticky left) */}
+              {/* Time gutter (sticky left) — cada fila de 15 minutos muestra su hora exacta */}
               <div className="sticky left-0 z-20 w-20 flex-shrink-0 bg-slate-900/95">
-                {hourSlots.map((hour) => (
+                {timeSlots.map((slot) => (
                   <div
-                    key={hour.startMin}
-                    className="border-b border-r border-slate-800/50 flex items-start justify-center pt-1.5"
-                    style={{ height: rowHeight * 4 }}
+                    key={slot.startMin}
+                    className={cn(
+                      'border-r flex items-start justify-center pt-1',
+                      slot.startMin % 60 === 0
+                        ? 'border-b border-slate-800/60'
+                        : 'border-b border-slate-800/20'
+                    )}
+                    style={{ height: rowHeight }}
                   >
-                    <span className="text-[10px] lg:text-xs font-medium text-slate-500">
-                      {hour.start}
+                    <span
+                      className={cn(
+                        'leading-none',
+                        slot.startMin % 60 === 0
+                          ? 'text-[10px] lg:text-xs font-medium text-slate-500'
+                          : 'text-[9px] lg:text-[10px] text-slate-600'
+                      )}
+                    >
+                      {slot.start}
                     </span>
                   </div>
                 ))}
