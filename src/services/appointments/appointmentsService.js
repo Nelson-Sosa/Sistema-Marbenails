@@ -79,7 +79,7 @@ export async function createAppointment(data) {
     professionalId: data.professionalId ?? DEFAULT_PROFESSIONAL_ID,
     date: Timestamp.fromDate(preciseDate),
     time: data.time,
-    duration: data.duration,
+    duration: Math.max(1, Math.min(720, Number(data.duration) || 60)),
     price: data.price,
     status: APPOINTMENT_STATUS.PENDING,
     clientName: data.clientName ?? '',
@@ -170,6 +170,11 @@ export async function updateAppointmentDetails(id, data) {
   const payload = {
     ...data,
     updatedAt: serverTimestamp(),
+  }
+
+  // Ensure duration is a valid number
+  if (payload.duration !== undefined) {
+    payload.duration = Math.max(1, Math.min(720, Number(payload.duration) || 60))
   }
 
   // Ensure date is a Timestamp if provided as Date
