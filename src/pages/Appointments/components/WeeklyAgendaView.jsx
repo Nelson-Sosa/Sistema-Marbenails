@@ -45,12 +45,21 @@ const ROW_HEIGHT_BREAKPOINTS = {
 }
 
 const STATUS_CELL_STYLES = {
-  [APPOINTMENT_STATUS.PENDING]: 'border-l-amber-500 bg-amber-500/10',
-  [APPOINTMENT_STATUS.CONFIRMED]: 'border-l-sky-500 bg-sky-500/10',
-  [APPOINTMENT_STATUS.IN_PROGRESS]: 'border-l-rose-500 bg-rose-500/20 ring-1 ring-rose-500/30',
-  [APPOINTMENT_STATUS.DONE]: 'border-l-emerald-500 bg-emerald-500/10 line-through opacity-70',
-  [APPOINTMENT_STATUS.CANCELLED]: 'border-l-red-500 bg-red-500/5 opacity-40',
-  [APPOINTMENT_STATUS.NO_SHOW]: 'border-l-amber-600 bg-amber-600/5 opacity-50',
+  [APPOINTMENT_STATUS.PENDING]: 'border-l-amber-500',
+  [APPOINTMENT_STATUS.CONFIRMED]: 'border-l-sky-500',
+  [APPOINTMENT_STATUS.IN_PROGRESS]: 'border-l-rose-500 ring-1 ring-rose-500/30',
+  [APPOINTMENT_STATUS.DONE]: 'border-l-emerald-500',
+  [APPOINTMENT_STATUS.CANCELLED]: 'border-l-red-500',
+  [APPOINTMENT_STATUS.NO_SHOW]: 'border-l-amber-600',
+}
+
+const STATUS_BG_TINTS = {
+  [APPOINTMENT_STATUS.PENDING]: 'bg-amber-500/10',
+  [APPOINTMENT_STATUS.CONFIRMED]: 'bg-sky-500/10',
+  [APPOINTMENT_STATUS.IN_PROGRESS]: 'bg-rose-500/20',
+  [APPOINTMENT_STATUS.DONE]: 'bg-emerald-500/10',
+  [APPOINTMENT_STATUS.CANCELLED]: '',
+  [APPOINTMENT_STATUS.NO_SHOW]: '',
 }
 
 const STATUS_DOT_COLORS = {
@@ -390,8 +399,8 @@ export default function WeeklyAgendaView() {
                               handleAppointmentClick(apt)
                             }}
                             className={cn(
-                              'absolute left-0.5 right-0.5 rounded-md border-l-[3px] overflow-hidden cursor-pointer transition-shadow hover:shadow-lg hover:shadow-black/20 z-10',
-                              STATUS_CELL_STYLES[apt.status] || 'border-l-slate-600 bg-slate-800/30'
+                              'absolute left-0.5 right-0.5 border-l-[3px] overflow-hidden cursor-pointer bg-slate-900 transition-shadow hover:shadow-lg hover:shadow-black/20 z-10',
+                              STATUS_CELL_STYLES[apt.status] || 'border-l-slate-600'
                             )}
                             style={{
                               top: `${top}px`,
@@ -399,8 +408,11 @@ export default function WeeklyAgendaView() {
                               minHeight: `${Math.max(rowHeight, 18)}px`,
                             }}
                           >
+                            {/* Status background tint (opaque bg-slate-900 evita que se vean las grillas debajo) */}
+                            <div className={cn('absolute inset-0', STATUS_BG_TINTS[apt.status])} />
+
                             {showContent && (
-                              <div className="flex flex-col gap-0.5 h-full px-1 lg:px-1.5 py-0.5 lg:py-1">
+                              <div className="relative z-10 flex flex-col gap-0.5 h-full px-1 lg:px-1.5 py-0.5 lg:py-1">
                                 <span className="truncate text-[10px] lg:text-xs font-medium text-white leading-tight">
                                   {apt.clientName}
                                 </span>
