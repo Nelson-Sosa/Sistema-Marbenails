@@ -398,6 +398,20 @@ export default function WeeklyAgendaView() {
                         const visible = height >= rowHeight * 0.5
                         const showContent = blocks >= 2
 
+                        // LOG TEMPORAL — diagnosticar duración real del turno
+                        console.log('📅 APPOINTMENT:', {
+                          id: apt.id,
+                          client: apt.clientName,
+                          time: apt.time,
+                          durationRaw: apt.duration,
+                          durationType: typeof apt.duration,
+                          safeDuration,
+                          blocks,
+                          top,
+                          height,
+                          rowHeight,
+                        })
+
                         if (!visible || height <= 0) return null
 
                         return (
