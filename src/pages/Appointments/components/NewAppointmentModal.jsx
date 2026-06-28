@@ -10,7 +10,7 @@ import { useServices } from '@/hooks/useServices'
 import { useCreateAppointment, useUpdateAppointmentDetails } from '@/hooks/useAppointments'
 import { useAuth } from '@/context/AuthContext'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
-import { BUSINESS_HOURS } from '@/constants/app'
+import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
@@ -230,7 +230,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
           <Input 
             label="Fecha del turno" 
             type="date" 
-            min={minDate}
+            min={role === USER_ROLES.ADMIN ? undefined : minDate}
             error={errors.date?.message}
             {...register('date')}
           />

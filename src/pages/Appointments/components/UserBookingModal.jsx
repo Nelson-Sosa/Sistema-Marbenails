@@ -9,7 +9,7 @@ import { useServices } from '@/hooks/useServices'
 import { useActiveCategories } from '@/hooks/useServiceCategories'
 import { useCreateAppointment } from '@/hooks/useAppointments'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
-import { BUSINESS_HOURS } from '@/constants/app'
+import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
@@ -269,7 +269,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
               <Input
                 type="date"
                 label="Fecha"
-                min={minDate}
+                min={role === USER_ROLES.ADMIN ? undefined : minDate}
                 error={errors.date?.message}
                 {...register('date')}
               />
