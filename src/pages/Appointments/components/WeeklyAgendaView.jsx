@@ -481,6 +481,7 @@ export default function WeeklyAgendaView() {
               ? editingAppointment.date.toDate()
               : new Date())
           }
+          initialTime={modalPrefill?.time || undefined}
           appointmentToEdit={editingAppointment}
         />
       )}

@@ -52,7 +52,7 @@ const schema = z.object({
   // según el rol del usuario (admin puede agendar en pasado, cliente no).
 })
 
-function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit = null }) {
+function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appointmentToEdit = null }) {
   const { role } = useAuth()
   const { data: clients, isLoading: loadingClients } = useClients()
   const { data: services, isLoading: loadingServices } = useServices()
@@ -74,7 +74,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit =
       clientId: appointmentToEdit?.clientId || '',
       serviceId: appointmentToEdit?.serviceId || '',
       date: getEditDateStr(),
-      time: appointmentToEdit?.time || '10:00',
+      time: appointmentToEdit?.time || initialTime || '10:00',
     }
   })
 
@@ -91,7 +91,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit =
         clientId: '',
         serviceId: '',
         date: format(initialDate, 'yyyy-MM-dd'),
-        time: '10:00',
+        time: initialTime || '10:00',
       })
     }
   }, [appointmentToEdit, initialDate, reset])
