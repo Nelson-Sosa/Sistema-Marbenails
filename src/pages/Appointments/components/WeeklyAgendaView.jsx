@@ -14,7 +14,7 @@ import {
 } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useAppointmentsByDateRange, useUpdateAppointmentStatus } from '@/hooks/useAppointments'
-import { BUSINESS_HOURS, APPOINTMENT_STATUS } from '@/constants/app'
+import { BUSINESS_HOURS, APPOINTMENT_STATUS, STATUS_CONFIG } from '@/constants/app'
 import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
@@ -94,6 +94,14 @@ function generateTimeSlots(start, end, interval) {
     slots.push({ start: label, startMin: m })
   }
   return slots
+}
+
+function formatDuration(minutes) {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  if (h === 0) return `${m} min`
+  if (m === 0) return `${h} h`
+  return `${h} h ${m} min`
 }
 
 function getMonday(date) {
@@ -398,19 +406,17 @@ export default function WeeklyAgendaView() {
                         const visible = height >= rowHeight * 0.5
                         const showContent = blocks >= 2
 
-                        // LOG TEMPORAL — diagnosticar duración real del turno
-                        console.log('📅 APPOINTMENT:', {
-                          id: apt.id,
-                          client: apt.clientName,
-                          time: apt.time,
-                          durationRaw: apt.duration,
-                          durationType: typeof apt.duration,
-                          safeDuration,
-                          blocks,
-                          top,
-                          height,
-                          rowHeight,
-                        })
+                        // End time and duration formatting
+                        const endMin = aptStartMin + safeDuration
+                        const endH = Math.floor(endMin / 60)
+                        const endM = endMin % 60
+                        const endTimeStr = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
+                        const formattedDuration = formatDuration(safeDuration)
+
+                        // Content tiers (responsive hiding)
+                        const showTimeRow = blocks >= 3
+                        const showStandard = blocks >= 5
+                        const showExpanded = blocks >= 9
 
                         if (!visible || height <= 0) return null
 
@@ -431,23 +437,58 @@ export default function WeeklyAgendaView() {
                               minHeight: `${Math.max(rowHeight, 18)}px`,
                             }}
                           >
-                            {/* Status background tint (opaque bg-slate-900 evita que se vean las grillas debajo) */}
+                            {/* Status background tint */}
                             <div className={cn('absolute inset-0', STATUS_BG_TINTS[apt.status])} />
 
                             {showContent && (
-                              <div className="relative z-10 flex flex-col gap-0.5 h-full px-1 lg:px-1.5 py-0.5 lg:py-1">
-                                <span className="truncate text-[10px] lg:text-xs font-medium text-white leading-tight">
+                              <div className="relative z-10 flex flex-col h-full px-1 lg:px-1.5 py-0.5 lg:py-1 min-h-0">
+                                {/* Client name — most prominent */}
+                                <span className="truncate text-[10px] lg:text-xs font-semibold text-white leading-tight">
                                   {apt.clientName}
                                 </span>
-                                <div className="flex items-center gap-1 mt-auto shrink-0">
-                                  <span
-                                    className={cn(
-                                      'h-1.5 w-1.5 rounded-full shrink-0',
-                                      STATUS_DOT_COLORS[apt.status]
+
+                                {/* Service name — secondary */}
+                                {showStandard && apt.serviceName && (
+                                  <span className="truncate text-[9px] lg:text-[10px] text-slate-300 leading-tight mt-px">
+                                    {apt.serviceName}
+                                  </span>
+                                )}
+
+                                {/* Flexible spacer → pushes bottom content down */}
+                                <div className="flex-1 min-h-0" />
+
+                                {/* Time row: 16:00 → 18:10 */}
+                                {showTimeRow && (
+                                  <div className="flex items-baseline gap-1 flex-wrap">
+                                    <span className="text-[9px] lg:text-[10px] font-medium text-slate-400 leading-none">
+                                      {apt.time}
+                                    </span>
+                                    <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">→</span>
+                                    <span className="text-[9px] lg:text-[10px] text-slate-400 leading-none">
+                                      {endTimeStr}
+                                    </span>
+                                    {showExpanded && (
+                                      <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none ml-auto">
+                                        {formattedDuration}
+                                      </span>
                                     )}
-                                  />
-                                  <span className="truncate text-[9px] lg:text-[10px] text-slate-400 leading-none">
-                                    {apt.time} · {blocks * SLOT_INTERVAL}min
+                                  </div>
+                                )}
+
+                                {/* Expanded: Finaliza hint */}
+                                {showExpanded && (
+                                  <div className="flex items-center mt-px">
+                                    <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">
+                                      Finaliza a las {endTimeStr}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Status row — separated with top margin */}
+                                <div className="flex items-center gap-1 mt-1 shrink-0">
+                                  <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', STATUS_DOT_COLORS[apt.status])} />
+                                  <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none">
+                                    {STATUS_CONFIG[apt.status]?.label || apt.status}
                                   </span>
                                   {blocks >= 5 && (
                                     <div className="ml-auto shrink-0 hidden lg:block" onClick={(e) => e.stopPropagation()}>
