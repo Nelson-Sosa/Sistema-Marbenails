@@ -267,7 +267,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
                 error={errors.date?.message}
                 {...register('date')}
               />
-              <Input label="Hora" type="time" error={errors.time?.message} {...register('time')} />
+              <Input label="Hora" type="time" step={900} error={errors.time?.message} {...register('time')} />
             </div>
 
             <div className="mt-4 flex justify-end gap-3">

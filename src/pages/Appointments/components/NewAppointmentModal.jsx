@@ -235,6 +235,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit =
           <Input 
             label="Hora del turno" 
             type="time" 
+            step={900}
             error={errors.time?.message}
             {...register('time')}
           />

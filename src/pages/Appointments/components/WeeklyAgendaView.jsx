@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,9 +21,28 @@ import Spinner from '@/components/ui/Spinner'
 import NewAppointmentModal from './NewAppointmentModal'
 import AppointmentStatusMenu from './AppointmentStatusMenu'
 
-const DAY_LABELS = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB']
+// ── Constants ──────────────────────────────────────────────────────────────
 
-const SLOT_INTERVAL = 60
+const DAY_LABELS = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB']
+const SLOT_INTERVAL = 15
+
+const BUSINESS_START_MIN = (() => {
+  const [h, m] = BUSINESS_HOURS.START.split(':').map(Number)
+  return h * 60 + m
+})()
+
+const BUSINESS_END_MIN = (() => {
+  const [h, m] = BUSINESS_HOURS.END.split(':').map(Number)
+  return h * 60 + m
+})()
+
+const TOTAL_SLOTS = Math.floor((BUSINESS_END_MIN - BUSINESS_START_MIN) / SLOT_INTERVAL)
+
+const ROW_HEIGHT_BREAKPOINTS = {
+  base: 22,
+  sm: 26,
+  lg: 32,
+}
 
 const STATUS_CELL_STYLES = {
   [APPOINTMENT_STATUS.PENDING]: 'border-l-amber-500 bg-amber-500/10',
@@ -48,6 +67,8 @@ const NON_BLOCKING_STATUSES = new Set([
   APPOINTMENT_STATUS.NO_SHOW,
 ])
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
 function toMinutes(time) {
   const [h, m] = time.split(':').map(Number)
   return h * 60 + m
@@ -67,8 +88,7 @@ function generateTimeSlots(start, end, interval) {
 }
 
 function getMonday(date) {
-  const d = startOfWeek(date, { weekStartsOn: 1 })
-  return d
+  return startOfWeek(date, { weekStartsOn: 1 })
 }
 
 function getWeekDays(weekStart) {
@@ -79,10 +99,20 @@ function isSlotOccupied(appointment, slotStartMin, slotEndMin) {
   if (!appointment.time || appointment.duration == null) return false
   if (NON_BLOCKING_STATUSES.has(appointment.status)) return false
   const aptStart = toMinutes(appointment.time)
-  const safeDuration = Math.min(Number(appointment.duration) || 60, 720) // max 12h
+  const safeDuration = Math.min(Number(appointment.duration) || 60, 720)
   const aptEnd = aptStart + safeDuration
   return aptStart < slotEndMin && aptEnd > slotStartMin
 }
+
+function getRowHeight() {
+  if (typeof window === 'undefined') return ROW_HEIGHT_BREAKPOINTS.base
+  const w = window.innerWidth
+  if (w >= 1024) return ROW_HEIGHT_BREAKPOINTS.lg
+  if (w >= 640) return ROW_HEIGHT_BREAKPOINTS.sm
+  return ROW_HEIGHT_BREAKPOINTS.base
+}
+
+// ── Component ──────────────────────────────────────────────────────────────
 
 export default function WeeklyAgendaView() {
   const today = new Date()
@@ -90,6 +120,22 @@ export default function WeeklyAgendaView() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingAppointment, setEditingAppointment] = useState(null)
   const [modalPrefill, setModalPrefill] = useState(null)
+  const [now, setNow] = useState(new Date())
+  const [rowHeight, setRowHeight] = useState(getRowHeight())
+
+  // Update current time and responsive row height
+  useEffect(() => {
+    const updateTime = () => setNow(new Date())
+    const updateHeight = () => setRowHeight(getRowHeight())
+
+    const intervalId = setInterval(updateTime, 60000)
+    window.addEventListener('resize', updateHeight)
+
+    return () => {
+      clearInterval(intervalId)
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [])
 
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 })
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart])
@@ -97,11 +143,21 @@ export default function WeeklyAgendaView() {
   const { data: appointments, isLoading } = useAppointmentsByDateRange(weekStart, weekEnd)
   const { mutate: updateStatus } = useUpdateAppointmentStatus()
 
+  // 15-min time slots
   const timeSlots = useMemo(
     () => generateTimeSlots(BUSINESS_HOURS.START, BUSINESS_HOURS.END, SLOT_INTERVAL),
     []
   )
 
+  // Hour-boundary slots for the time gutter labels
+  const hourSlots = useMemo(
+    () => timeSlots.filter(s => s.startMin % 60 === 0),
+    [timeSlots]
+  )
+
+  const totalHeight = TOTAL_SLOTS * rowHeight
+
+  // Group appointments by day
   const appointmentsByDay = useMemo(() => {
     if (!appointments) return {}
     const map = {}
@@ -117,52 +173,44 @@ export default function WeeklyAgendaView() {
     return map
   }, [appointments])
 
-  const grid = useMemo(() => {
-    const gridMap = {}
-    for (const day of weekDays) {
-      const dayKey = format(day, 'yyyy-MM-dd')
-      const dayAppointments = appointmentsByDay[dayKey] || []
-      const dayCol = []
+  // Current time indicator position
+  const currentTimeMinutes = now.getHours() * 60 + now.getMinutes()
+  const isWithinBusinessHours =
+    currentTimeMinutes >= BUSINESS_START_MIN && currentTimeMinutes < BUSINESS_END_MIN
+  const currentTimeTop =
+    ((currentTimeMinutes - BUSINESS_START_MIN) / SLOT_INTERVAL) * rowHeight
 
-      for (let si = 0; si < timeSlots.length; si++) {
-        const slot = timeSlots[si]
-        const slotEndMin = slot.startMin + SLOT_INTERVAL
-        const found = dayAppointments.find((apt) =>
-          isSlotOccupied(apt, slot.startMin, slotEndMin)
-        )
-        if (found) {
-          const aptStartMin = toMinutes(found.time)
-          const isFirstSlot = aptStartMin >= slot.startMin && aptStartMin < slotEndMin
-          dayCol.push({ type: 'occupied', appointment: found, isFirstSlot })
-        } else {
-          dayCol.push({ type: 'free', appointment: null, isFirstSlot: false })
-        }
-      }
-      gridMap[dayKey] = dayCol
-    }
-    return gridMap
-  }, [weekDays, timeSlots, appointmentsByDay])
+  // ── Handlers ────────────────────────────────────────────────────────────
 
   const handlePrevWeek = () => setWeekStart(subDays(weekStart, 7))
   const handleNextWeek = () => setWeekStart(addDays(weekStart, 7))
   const handleThisWeek = () => setWeekStart(getMonday(today))
 
-  const handleCellClick = (day, slot) => {
-    const dayKey = format(day, 'yyyy-MM-dd')
-    const cell = grid[dayKey]?.[slot]
-    if (!cell) return
+  const handleCellClick = useCallback(
+    (day, slot) => {
+      const dayKey = format(day, 'yyyy-MM-dd')
+      const dayAppts = appointmentsByDay[dayKey] || []
+      const slotEnd = slot.startMin + SLOT_INTERVAL
+      const found = dayAppts.find(apt => isSlotOccupied(apt, slot.startMin, slotEnd))
 
-    if (cell.type === 'occupied' && cell.appointment) {
-      setEditingAppointment(cell.appointment)
-      setModalPrefill(null)
-      setIsModalOpen(true)
-    } else {
-      const timeStr = timeSlots[slot].start
-      setEditingAppointment(null)
-      setModalPrefill({ date: day, time: timeStr })
-      setIsModalOpen(true)
-    }
-  }
+      if (found) {
+        setEditingAppointment(found)
+        setModalPrefill(null)
+        setIsModalOpen(true)
+      } else {
+        setEditingAppointment(null)
+        setModalPrefill({ date: day, time: slot.start })
+        setIsModalOpen(true)
+      }
+    },
+    [appointmentsByDay]
+  )
+
+  const handleAppointmentClick = useCallback((appointment) => {
+    setEditingAppointment(appointment)
+    setModalPrefill(null)
+    setIsModalOpen(true)
+  }, [])
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
@@ -230,109 +278,173 @@ export default function WeeklyAgendaView() {
         </Button>
       </div>
 
-      {/* ── Weekly Grid ─────────────────────────────────────────────────── */}
+      {/* ── Calendar Grid ───────────────────────────────────────────────── */}
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
           <Spinner size="lg" />
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900">
-          <div
-            className="grid min-w-0 lg:min-w-[800px]"
-            style={{
-              gridTemplateColumns: `80px repeat(7, 1fr)`,
-            }}
-          >
-            {/* ── Header Row ─────────────────────────────────────────────── */}
-            <div className="sticky top-0 z-10 border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm">
-              <div className="flex h-10 lg:h-14 items-center justify-center border-r border-slate-800 text-[10px] lg:text-xs font-medium text-slate-500">
-                Hora
+        <div className="overflow-auto rounded-xl border border-slate-800 bg-slate-900">
+          <div className="inline-flex flex-col min-w-[780px] select-none">
+            {/* ── Sticky Header Row ─────────────────────────────────────── */}
+            <div className="sticky top-0 z-30 flex">
+              <div className="sticky left-0 z-30 w-20 flex-shrink-0 flex items-center justify-center border-r border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm h-10 lg:h-14">
+                <span className="text-[10px] lg:text-xs font-medium text-slate-500">
+                  Hora
+                </span>
               </div>
-            </div>
-            {weekDays.map((day, di) => {
-              const isToday = isSameDay(day, today)
-              return (
-                <div
-                  key={di}
-                  className={cn(
-                    'sticky top-0 z-10 flex flex-col items-center justify-center border-b border-r border-slate-800 bg-slate-900/95 px-1 lg:px-2 py-1 lg:py-2 backdrop-blur-sm last:border-r-0',
-                    isToday && 'bg-rose-500/10'
-                  )}
-                >
-                  <span className="text-[10px] lg:text-xs font-semibold uppercase text-slate-400">
-                    {DAY_LABELS[day.getDay()]}
-                  </span>
-                  <span
+              {weekDays.map((day, di) => {
+                const isToday = isSameDay(day, today)
+                return (
+                  <div
+                    key={di}
                     className={cn(
-                      'mt-0.5 text-sm lg:text-lg font-bold leading-none',
-                      isToday ? 'text-rose-400' : 'text-white'
+                      'flex-1 flex flex-col items-center justify-center border-r border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm px-1 lg:px-2 py-1 lg:py-2 last:border-r-0',
+                      isToday && 'bg-rose-500/10'
                     )}
                   >
-                    {format(day, 'd')}
-                  </span>
-                </div>
-              )
-            })}
-
-            {/* ── Body Rows ──────────────────────────────────────────────── */}
-            {timeSlots.map((slot, si) => (
-              <div key={si} className="contents">
-                {/* Time label */}
-                <div className="flex items-start justify-center border-b border-r border-slate-800/50 px-1 py-2">
-                  <span className="whitespace-nowrap text-xs font-medium text-slate-500">
-                    {slot.start}
-                  </span>
-                </div>
-
-                {/* Day cells */}
-                {weekDays.map((day, di) => {
-                  const dayKey = format(day, 'yyyy-MM-dd')
-                  const cell = grid[dayKey]?.[si]
-                  if (!cell) return <div key={di} className="border-b border-r border-slate-800/50 last:border-r-0" />
-
-                  return (
-                    <div
-                      key={di}
-                      onClick={() => handleCellClick(day, si)}
+                    <span className="text-[10px] lg:text-xs font-semibold uppercase text-slate-400">
+                      {DAY_LABELS[day.getDay()]}
+                    </span>
+                    <span
                       className={cn(
-                        'group relative min-h-[44px] lg:min-h-[52px] cursor-pointer border-b border-r border-slate-800/50 p-1.5 transition-colors last:border-r-0 hover:bg-slate-800/50',
-                        cell.type === 'occupied'
-                          ? STATUS_CELL_STYLES[cell.appointment?.status] || 'border-l-slate-600 bg-slate-800/30'
-                          : 'border-l-transparent hover:border-l-emerald-500/30 hover:bg-emerald-500/5'
+                        'mt-0.5 text-sm lg:text-lg font-bold leading-none',
+                        isToday ? 'text-rose-400' : 'text-white'
                       )}
                     >
-                      {cell.type === 'occupied' && cell.appointment ? (
-                        <div className="flex flex-col gap-0.5">
-                          {cell.isFirstSlot && (
-                            <>
-                              <div className="flex items-center gap-1">
-                                <span className="truncate text-xs font-medium text-white">
-                                  {cell.appointment.clientName}
-                                </span>
-                              </div>
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <AppointmentStatusMenu
-                                  currentStatus={cell.appointment.status}
-                                  onChange={(newStatus) =>
-                                    updateStatus({ id: cell.appointment.id, status: newStatus })
-                                  }
-                                />
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <span className="text-[10px] font-medium tracking-wider text-slate-600 opacity-0 transition-opacity group-hover:opacity-100">
-                            + LIBRE
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+                      {format(day, 'd')}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* ── Scrollable Body ───────────────────────────────────────── */}
+            <div className="flex relative">
+              {/* Time gutter (sticky left) */}
+              <div className="sticky left-0 z-20 w-20 flex-shrink-0 bg-slate-900/95">
+                {hourSlots.map((hour) => (
+                  <div
+                    key={hour.startMin}
+                    className="border-b border-r border-slate-800/50 flex items-start justify-center pt-1.5"
+                    style={{ height: rowHeight * 4 }}
+                  >
+                    <span className="text-[10px] lg:text-xs font-medium text-slate-500">
+                      {hour.start}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+
+              {/* Day columns */}
+              {weekDays.map((day, di) => {
+                const dayKey = format(day, 'yyyy-MM-dd')
+                const dayAppts = appointmentsByDay[dayKey] || []
+                const isToday = isSameDay(day, today)
+
+                return (
+                  <div
+                    key={di}
+                    className="flex-1 relative border-r border-slate-800/50 last:border-r-0 min-w-[90px]"
+                    style={{ height: totalHeight }}
+                  >
+                    {/* Background grid — each 15-min block is a click target */}
+                    {timeSlots.map((slot) => (
+                      <div
+                        key={slot.startMin}
+                        onClick={() => handleCellClick(day, slot)}
+                        className={cn(
+                          'cursor-pointer border-b transition-colors',
+                          slot.startMin % 60 === 0
+                            ? 'border-slate-800/60'
+                            : 'border-slate-800/20',
+                          'hover:bg-emerald-500/5'
+                        )}
+                        style={{ height: rowHeight }}
+                      />
+                    ))}
+
+                    {/* Appointment blocks — absolutely positioned */}
+                    {dayAppts
+                      .filter(apt => {
+                        if (NON_BLOCKING_STATUSES.has(apt.status)) return false
+                        const startMin = toMinutes(apt.time)
+                        return startMin >= BUSINESS_START_MIN
+                      })
+                      .map((apt) => {
+                        const aptStartMin = toMinutes(apt.time)
+                        const safeDuration = Math.min(Number(apt.duration) || 60, 720)
+                        const blocks = Math.ceil(safeDuration / SLOT_INTERVAL)
+                        const top = ((aptStartMin - BUSINESS_START_MIN) / SLOT_INTERVAL) * rowHeight
+                        const height = Math.min(blocks * rowHeight, totalHeight - top)
+                        const visible = height >= rowHeight * 0.5
+                        const showContent = blocks >= 2
+
+                        if (!visible || height <= 0) return null
+
+                        return (
+                          <div
+                            key={apt.id}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleAppointmentClick(apt)
+                            }}
+                            className={cn(
+                              'absolute left-0.5 right-0.5 rounded-md border-l-[3px] overflow-hidden cursor-pointer transition-shadow hover:shadow-lg hover:shadow-black/20 z-10',
+                              STATUS_CELL_STYLES[apt.status] || 'border-l-slate-600 bg-slate-800/30'
+                            )}
+                            style={{
+                              top: `${top}px`,
+                              height: `${height}px`,
+                              minHeight: `${Math.max(rowHeight, 18)}px`,
+                            }}
+                          >
+                            {showContent && (
+                              <div className="flex flex-col gap-0.5 h-full px-1.5 py-1">
+                                <span className="truncate text-[10px] lg:text-xs font-medium text-white leading-tight">
+                                  {apt.clientName}
+                                </span>
+                                <div className="flex items-center gap-1 mt-auto shrink-0">
+                                  <span
+                                    className={cn(
+                                      'h-1.5 w-1.5 rounded-full shrink-0',
+                                      STATUS_DOT_COLORS[apt.status]
+                                    )}
+                                  />
+                                  <span className="truncate text-[9px] lg:text-[10px] text-slate-400 leading-none">
+                                    {apt.time} · {blocks * SLOT_INTERVAL}min
+                                  </span>
+                                  {blocks >= 4 && (
+                                    <div className="ml-auto shrink-0" onClick={(e) => e.stopPropagation()}>
+                                      <AppointmentStatusMenu
+                                        currentStatus={apt.status}
+                                        onChange={(newStatus) => updateStatus({ id: apt.id, status: newStatus })}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+
+                    {/* Current time indicator */}
+                    {isToday && isWithinBusinessHours && (
+                      <div
+                        className="absolute left-0 right-0 z-20 pointer-events-none"
+                        style={{ top: `${currentTimeTop}px` }}
+                      >
+                        <div className="flex items-center -ml-0.5">
+                          <div className="h-2 w-2 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50" />
+                          <div className="flex-1 h-px bg-rose-500" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -342,7 +454,12 @@ export default function WeeklyAgendaView() {
         <NewAppointmentModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          initialDate={modalPrefill?.date || (editingAppointment?.date?.toDate ? editingAppointment.date.toDate() : new Date())}
+          initialDate={
+            modalPrefill?.date ||
+            (editingAppointment?.date?.toDate
+              ? editingAppointment.date.toDate()
+              : new Date())
+          }
           appointmentToEdit={editingAppointment}
         />
       )}
