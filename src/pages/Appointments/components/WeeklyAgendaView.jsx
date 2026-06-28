@@ -47,7 +47,7 @@ const ROW_HEIGHT_BREAKPOINTS = {
 const STATUS_CELL_STYLES = {
   [APPOINTMENT_STATUS.PENDING]: 'border-l-amber-500',
   [APPOINTMENT_STATUS.CONFIRMED]: 'border-l-sky-500',
-  [APPOINTMENT_STATUS.IN_PROGRESS]: 'border-l-rose-500 ring-1 ring-rose-500/30',
+  [APPOINTMENT_STATUS.IN_PROGRESS]: 'border-l-rose-500',
   [APPOINTMENT_STATUS.DONE]: 'border-l-emerald-500',
   [APPOINTMENT_STATUS.CANCELLED]: 'border-l-red-500',
   [APPOINTMENT_STATUS.NO_SHOW]: 'border-l-amber-600',
@@ -413,10 +413,9 @@ export default function WeeklyAgendaView() {
                         const endTimeStr = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
                         const formattedDuration = formatDuration(safeDuration)
 
-                        // Content tiers (responsive hiding)
-                        const showTimeRow = blocks >= 3
-                        const showStandard = blocks >= 5
-                        const showExpanded = blocks >= 9
+                        // Content tiers by appointment length
+                        const showServiceName = blocks >= 3      // 45 min+
+                        const showExpanded = blocks >= 4         // 60 min+
 
                         if (!visible || height <= 0) return null
 
@@ -442,40 +441,38 @@ export default function WeeklyAgendaView() {
 
                             {showContent && (
                               <div className="relative z-10 flex flex-col h-full px-1 lg:px-1.5 py-0.5 lg:py-1 min-h-0">
-                                {/* Client name — most prominent */}
+                                {/* Client name — always visible, most prominent */}
                                 <span className="truncate text-[10px] lg:text-xs font-semibold text-white leading-tight">
                                   {apt.clientName}
                                 </span>
 
-                                {/* Service name — secondary */}
-                                {showStandard && apt.serviceName && (
+                                {/* Service name — solo si no está corrupto (mismo nombre que el cliente) */}
+                                {showServiceName && apt.serviceName && apt.serviceName !== apt.clientName && (
                                   <span className="truncate text-[9px] lg:text-[10px] text-slate-300 leading-tight mt-px">
                                     {apt.serviceName}
                                   </span>
                                 )}
 
-                                {/* Flexible spacer → pushes bottom content down */}
+                                {/* Flexible spacer */}
                                 <div className="flex-1 min-h-0" />
 
                                 {/* Time row: 16:00 → 18:10 */}
-                                {showTimeRow && (
-                                  <div className="flex items-baseline gap-1 flex-wrap">
-                                    <span className="text-[9px] lg:text-[10px] font-medium text-slate-400 leading-none">
-                                      {apt.time}
+                                <div className="flex items-baseline gap-1 flex-wrap">
+                                  <span className="text-[9px] lg:text-[10px] font-medium text-slate-400 leading-none">
+                                    {apt.time}
+                                  </span>
+                                  <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">→</span>
+                                  <span className="text-[9px] lg:text-[10px] text-slate-400 leading-none">
+                                    {endTimeStr}
+                                  </span>
+                                  {showExpanded && (
+                                    <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none ml-auto">
+                                      {formattedDuration}
                                     </span>
-                                    <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">→</span>
-                                    <span className="text-[9px] lg:text-[10px] text-slate-400 leading-none">
-                                      {endTimeStr}
-                                    </span>
-                                    {showExpanded && (
-                                      <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none ml-auto">
-                                        {formattedDuration}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
+                                  )}
+                                </div>
 
-                                {/* Expanded: Finaliza hint */}
+                                {/* Expanded: Finaliza hint — 60 min+ */}
                                 {showExpanded && (
                                   <div className="flex items-center mt-px">
                                     <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">
@@ -484,13 +481,13 @@ export default function WeeklyAgendaView() {
                                   </div>
                                 )}
 
-                                {/* Status row — separated with top margin */}
+                                {/* Status row — siempre visible */}
                                 <div className="flex items-center gap-1 mt-1 shrink-0">
-                                  <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', STATUS_DOT_COLORS[apt.status])} />
+                                  <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', STATUS_DOT_COLORS[apt.status] || 'bg-slate-600')} />
                                   <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none">
-                                    {STATUS_CONFIG[apt.status]?.label || apt.status}
+                                    {STATUS_CONFIG[apt.status]?.label || ''}
                                   </span>
-                                  {blocks >= 5 && (
+                                  {STATUS_CONFIG[apt.status] && blocks >= 5 && (
                                     <div className="ml-auto shrink-0 hidden lg:block" onClick={(e) => e.stopPropagation()}>
                                       <AppointmentStatusMenu
                                         currentStatus={apt.status}
