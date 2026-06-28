@@ -19,7 +19,7 @@ import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
 import NewAppointmentModal from './NewAppointmentModal'
-import AppointmentStatusMenu from './AppointmentStatusMenu'
+import AppointmentDrawer from './AppointmentDrawer'
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -62,13 +62,13 @@ const STATUS_BG_TINTS = {
   [APPOINTMENT_STATUS.NO_SHOW]: '',
 }
 
-const STATUS_DOT_COLORS = {
-  [APPOINTMENT_STATUS.PENDING]: 'bg-amber-500',
-  [APPOINTMENT_STATUS.CONFIRMED]: 'bg-sky-500',
-  [APPOINTMENT_STATUS.IN_PROGRESS]: 'bg-rose-500',
-  [APPOINTMENT_STATUS.DONE]: 'bg-emerald-500',
-  [APPOINTMENT_STATUS.CANCELLED]: 'bg-red-500',
-  [APPOINTMENT_STATUS.NO_SHOW]: 'bg-amber-600',
+const STATUS_CHIP_STYLES = {
+  [APPOINTMENT_STATUS.PENDING]: 'bg-amber-500/15 text-amber-400',
+  [APPOINTMENT_STATUS.CONFIRMED]: 'bg-sky-500/15 text-sky-400',
+  [APPOINTMENT_STATUS.IN_PROGRESS]: 'bg-rose-500/15 text-rose-400',
+  [APPOINTMENT_STATUS.DONE]: 'bg-emerald-500/15 text-emerald-400',
+  [APPOINTMENT_STATUS.CANCELLED]: 'bg-red-500/15 text-red-400',
+  [APPOINTMENT_STATUS.NO_SHOW]: 'bg-amber-600/15 text-amber-500',
 }
 
 const NON_BLOCKING_STATUSES = new Set([
@@ -94,14 +94,6 @@ function generateTimeSlots(start, end, interval) {
     slots.push({ start: label, startMin: m })
   }
   return slots
-}
-
-function formatDuration(minutes) {
-  const h = Math.floor(minutes / 60)
-  const m = minutes % 60
-  if (h === 0) return `${m} min`
-  if (m === 0) return `${h} h`
-  return `${h} h ${m} min`
 }
 
 function getMonday(date) {
@@ -137,6 +129,7 @@ export default function WeeklyAgendaView() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingAppointment, setEditingAppointment] = useState(null)
   const [modalPrefill, setModalPrefill] = useState(null)
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [now, setNow] = useState(new Date())
   const [rowHeight, setRowHeight] = useState(getRowHeight())
 
@@ -208,9 +201,7 @@ export default function WeeklyAgendaView() {
       const found = dayAppts.find(apt => isSlotOccupied(apt, slot.startMin, slotEnd))
 
       if (found) {
-        setEditingAppointment(found)
-        setModalPrefill(null)
-        setIsModalOpen(true)
+        setSelectedAppointment(found)
       } else {
         setEditingAppointment(null)
         setModalPrefill({ date: day, time: slot.start })
@@ -221,15 +212,24 @@ export default function WeeklyAgendaView() {
   )
 
   const handleAppointmentClick = useCallback((appointment) => {
-    setEditingAppointment(appointment)
-    setModalPrefill(null)
-    setIsModalOpen(true)
+    setSelectedAppointment(appointment)
   }, [])
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setEditingAppointment(null)
     setModalPrefill(null)
+  }
+
+  const handleCloseDrawer = () => {
+    setSelectedAppointment(null)
+  }
+
+  const handleEditFromDrawer = () => {
+    if (!selectedAppointment) return
+    setEditingAppointment(selectedAppointment)
+    setSelectedAppointment(null)
+    setIsModalOpen(true)
   }
 
   const handleNewAppointment = () => {
@@ -257,7 +257,7 @@ export default function WeeklyAgendaView() {
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-white">Agenda de Turnos</h1>
           <p className="mt-1 text-sm text-slate-400">
-            Vista semanal — hace clic en un turno para editarlo o en un espacio libre para agendar.
+            Hacé clic en un turno para ver los detalles o en un espacio libre para agendar.
           </p>
         </div>
         <Button
@@ -390,7 +390,7 @@ export default function WeeklyAgendaView() {
                       />
                     ))}
 
-                    {/* Appointment blocks — absolutely positioned */}
+                    {/* Appointment blocks — absolutely positioned, compact UI */}
                     {dayAppts
                       .filter(apt => {
                         if (NON_BLOCKING_STATUSES.has(apt.status)) return false
@@ -406,16 +406,8 @@ export default function WeeklyAgendaView() {
                         const visible = height >= rowHeight * 0.5
                         const showContent = blocks >= 2
 
-                        // End time and duration formatting
                         const endMin = aptStartMin + safeDuration
-                        const endH = Math.floor(endMin / 60)
-                        const endM = endMin % 60
-                        const endTimeStr = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
-                        const formattedDuration = formatDuration(safeDuration)
-
-                        // Content tiers by appointment length
-                        const showServiceName = blocks >= 3      // 45 min+
-                        const showExpanded = blocks >= 4         // 60 min+
+                        const endTimeStr = `${String(Math.floor(endMin / 60)).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`
 
                         if (!visible || height <= 0) return null
 
@@ -436,28 +428,17 @@ export default function WeeklyAgendaView() {
                               minHeight: `${Math.max(rowHeight, 18)}px`,
                             }}
                           >
-                            {/* Status background tint */}
                             <div className={cn('absolute inset-0', STATUS_BG_TINTS[apt.status])} />
 
                             {showContent && (
                               <div className="relative z-10 flex flex-col h-full px-1 lg:px-1.5 py-0.5 lg:py-1 min-h-0">
-                                {/* Client name — always visible, most prominent */}
                                 <span className="truncate text-[10px] lg:text-xs font-semibold text-white leading-tight">
                                   {apt.clientName}
                                 </span>
 
-                                {/* Service name — solo si no está corrupto (mismo nombre que el cliente) */}
-                                {showServiceName && apt.serviceName && apt.serviceName !== apt.clientName && (
-                                  <span className="truncate text-[9px] lg:text-[10px] text-slate-300 leading-tight mt-px">
-                                    {apt.serviceName}
-                                  </span>
-                                )}
-
-                                {/* Flexible spacer */}
                                 <div className="flex-1 min-h-0" />
 
-                                {/* Time row: 16:00 → 18:10 */}
-                                <div className="flex items-baseline gap-1 flex-wrap">
+                                <div className="flex items-baseline gap-1">
                                   <span className="text-[9px] lg:text-[10px] font-medium text-slate-400 leading-none">
                                     {apt.time}
                                   </span>
@@ -465,37 +446,14 @@ export default function WeeklyAgendaView() {
                                   <span className="text-[9px] lg:text-[10px] text-slate-400 leading-none">
                                     {endTimeStr}
                                   </span>
-                                  {showExpanded && (
-                                    <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none ml-auto">
-                                      {formattedDuration}
-                                    </span>
-                                  )}
                                 </div>
 
-                                {/* Expanded: Finaliza hint — 60 min+ */}
-                                {showExpanded && (
-                                  <div className="flex items-center mt-px">
-                                    <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">
-                                      Finaliza a las {endTimeStr}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {/* Status row — siempre visible */}
-                                <div className="flex items-center gap-1 mt-1 shrink-0">
-                                  <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', STATUS_DOT_COLORS[apt.status] || 'bg-slate-600')} />
-                                  <span className="text-[8px] lg:text-[9px] text-slate-500 leading-none">
-                                    {STATUS_CONFIG[apt.status]?.label || ''}
-                                  </span>
-                                  {STATUS_CONFIG[apt.status] && blocks >= 5 && (
-                                    <div className="ml-auto shrink-0 hidden lg:block" onClick={(e) => e.stopPropagation()}>
-                                      <AppointmentStatusMenu
-                                        currentStatus={apt.status}
-                                        onChange={(newStatus) => updateStatus({ id: apt.id, status: newStatus })}
-                                      />
-                                    </div>
-                                  )}
-                                </div>
+                                <span className={cn(
+                                  'self-start mt-px rounded-sm px-1 py-px text-[8px] lg:text-[9px] font-medium leading-tight',
+                                  STATUS_CHIP_STYLES[apt.status]
+                                )}>
+                                  {STATUS_CONFIG[apt.status]?.label || ''}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -537,6 +495,19 @@ export default function WeeklyAgendaView() {
           appointmentToEdit={editingAppointment}
         />
       )}
+
+      {/* ── Drawer ───────────────────────────────────────────────────────── */}
+      <AppointmentDrawer
+        appointment={selectedAppointment}
+        isOpen={!!selectedAppointment}
+        onClose={handleCloseDrawer}
+        onEdit={handleEditFromDrawer}
+        onStatusChange={(newStatus) => {
+          if (selectedAppointment) {
+            updateStatus({ id: selectedAppointment.id, status: newStatus })
+          }
+        }}
+      />
     </div>
   )
 }
