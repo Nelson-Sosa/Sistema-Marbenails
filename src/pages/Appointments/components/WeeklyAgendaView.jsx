@@ -79,7 +79,7 @@ function isSlotOccupied(appointment, slotStartMin, slotEndMin) {
   if (!appointment.time || appointment.duration == null) return false
   if (NON_BLOCKING_STATUSES.has(appointment.status)) return false
   const aptStart = toMinutes(appointment.time)
-  const aptEnd = aptStart + appointment.duration
+  const aptEnd = aptStart + Number(appointment.duration)
   return aptStart < slotEndMin && aptEnd > slotStartMin
 }
 
