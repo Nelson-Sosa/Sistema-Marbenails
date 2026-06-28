@@ -237,7 +237,7 @@ export default function WeeklyAgendaView() {
   const yearLabel = format(weekDays[0], 'yyyy', { locale: es })
 
   return (
-    <div className="flex h-full flex-col gap-6">
+    <div className="flex h-full flex-col gap-6 overflow-hidden">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
@@ -284,8 +284,8 @@ export default function WeeklyAgendaView() {
           <Spinner size="lg" />
         </div>
       ) : (
-        <div className="overflow-auto rounded-xl border border-slate-800 bg-slate-900">
-          <div className="inline-flex flex-col min-w-[780px] select-none">
+        <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-slate-800 bg-slate-900">
+          <div className="flex flex-col min-w-[780px] select-none">
             {/* ── Sticky Header Row ─────────────────────────────────────── */}
             <div className="sticky top-0 z-30 flex">
               <div className="sticky left-0 z-30 w-20 flex-shrink-0 flex items-center justify-center border-r border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm h-10 lg:h-14">
@@ -345,7 +345,7 @@ export default function WeeklyAgendaView() {
                 return (
                   <div
                     key={di}
-                    className="flex-1 relative border-r border-slate-800/50 last:border-r-0 min-w-[90px]"
+                    className="flex-1 relative border-r border-slate-800/50 last:border-r-0 min-w-[100px] lg:min-w-[130px]"
                     style={{ height: totalHeight }}
                   >
                     {/* Background grid — each 15-min block is a click target */}
@@ -400,7 +400,7 @@ export default function WeeklyAgendaView() {
                             }}
                           >
                             {showContent && (
-                              <div className="flex flex-col gap-0.5 h-full px-1.5 py-1">
+                              <div className="flex flex-col gap-0.5 h-full px-1 lg:px-1.5 py-0.5 lg:py-1">
                                 <span className="truncate text-[10px] lg:text-xs font-medium text-white leading-tight">
                                   {apt.clientName}
                                 </span>
@@ -414,8 +414,8 @@ export default function WeeklyAgendaView() {
                                   <span className="truncate text-[9px] lg:text-[10px] text-slate-400 leading-none">
                                     {apt.time} · {blocks * SLOT_INTERVAL}min
                                   </span>
-                                  {blocks >= 4 && (
-                                    <div className="ml-auto shrink-0" onClick={(e) => e.stopPropagation()}>
+                                  {blocks >= 5 && (
+                                    <div className="ml-auto shrink-0 hidden lg:block" onClick={(e) => e.stopPropagation()}>
                                       <AppointmentStatusMenu
                                         currentStatus={apt.status}
                                         onChange={(newStatus) => updateStatus({ id: apt.id, status: newStatus })}
