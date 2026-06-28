@@ -55,7 +55,7 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
 
   const minPrice = activeServices.length ? Math.min(...activeServices.map((s) => s.price)) : 0
   const avgDuration = activeServices.length
-    ? Math.round(activeServices.reduce((sum, s) => sum + s.duration, 0) / activeServices.length)
+    ? Math.round(activeServices.reduce((sum, s) => sum + Number(s.duration), 0) / activeServices.length)
     : 0
 
   return (
