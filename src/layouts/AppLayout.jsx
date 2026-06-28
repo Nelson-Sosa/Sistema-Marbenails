@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '@/components/layout/Sidebar'
 import Header from '@/components/layout/Header'
+import WhatsAppFloatingButton from '@/components/common/WhatsAppFloatingButton'
 import { cn } from '@/utils/cn'
 
 /**
@@ -58,6 +59,9 @@ function AppLayout() {
           </div>
         </main>
       </div>
+
+      {/* Floating Action Button */}
+      <WhatsAppFloatingButton />
     </div>
   )
 }

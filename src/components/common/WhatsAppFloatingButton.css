@@ -1,0 +1,88 @@
+/* 
+  WhatsAppFloatingButton.css 
+  Estilos específicos para el botón flotante de WhatsApp.
+*/
+
+.whatsapp-floating-button {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 40; /* Por debajo de modales (z-50) y tooltips/toasts, pero sobre el contenido principal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background-color: #25D366; /* Verde oficial de WhatsApp */
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(37, 211, 102, 0.25);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+  
+  /* Respetar Safe Area en dispositivos móviles modernos (ej. iPhone con notch) */
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+  margin-right: env(safe-area-inset-right, 0px);
+}
+
+/* Estado Hover y Focus (Accesibilidad por teclado) */
+.whatsapp-floating-button:hover,
+.whatsapp-floating-button:focus-visible {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(37, 211, 102, 0.35);
+  outline: none;
+}
+
+/* Accesibilidad adicional para cuando navega por teclado */
+.whatsapp-floating-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+/* Animación al hacer click */
+.whatsapp-floating-button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+.whatsapp-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  /* Asegurar que la imagen no genere eventos extra */
+  pointer-events: none; 
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+/* Tablet y Notebooks pequeñas */
+@media (max-width: 1024px) {
+  .whatsapp-floating-button {
+    width: 56px;
+    height: 56px;
+    bottom: 24px;
+    right: 24px;
+  }
+  .whatsapp-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .whatsapp-floating-button {
+    width: 50px;
+    height: 50px;
+    /* Se levanta un poco más para evitar chocar con inputs o teclados virtuales
+       en caso de que el navegador empuje la vista */
+    bottom: 24px; 
+    right: 16px;
+  }
+  .whatsapp-icon {
+    width: 26px;
+    height: 26px;
+  }
+}
