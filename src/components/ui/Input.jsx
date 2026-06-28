@@ -65,7 +65,7 @@ const Input = forwardRef(function Input(
             error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
           }
           className={cn(
-            'w-full rounded-lg border bg-slate-900 px-3 py-2.5 text-sm text-white',
+            'w-full rounded-lg border bg-slate-900 px-3 py-2.5 text-base sm:text-sm text-white',
             'placeholder:text-slate-500',
             'transition-colors duration-200',
             'focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:ring-offset-slate-950',
