@@ -302,22 +302,22 @@ export default function WeeklyAgendaView() {
                     >
                       {cell.type === 'occupied' && cell.appointment ? (
                         <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-1">
-                            <span className="truncate text-xs font-medium text-white">
-                              {cell.isFirstSlot
-                                ? cell.appointment.clientName
-                                : `↳ ${cell.appointment.clientName}`}
-                            </span>
-                          </div>
                           {cell.isFirstSlot && (
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <AppointmentStatusMenu
-                                currentStatus={cell.appointment.status}
-                                onChange={(newStatus) =>
-                                  updateStatus({ id: cell.appointment.id, status: newStatus })
-                                }
-                              />
-                            </div>
+                            <>
+                              <div className="flex items-center gap-1">
+                                <span className="truncate text-xs font-medium text-white">
+                                  {cell.appointment.clientName}
+                                </span>
+                              </div>
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <AppointmentStatusMenu
+                                  currentStatus={cell.appointment.status}
+                                  onChange={(newStatus) =>
+                                    updateStatus({ id: cell.appointment.id, status: newStatus })
+                                  }
+                                />
+                              </div>
+                            </>
                           )}
                         </div>
                       ) : (
