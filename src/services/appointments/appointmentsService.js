@@ -262,7 +262,8 @@ export async function checkAppointmentConflict(date, time, durationMinutes, excl
   }
 
   const newStart = toMinutes(time)
-  const newEnd   = newStart + (Number(durationMinutes) || 60)
+  const safeNewDuration = Math.min(Number(durationMinutes) || 60, 720)
+  const newEnd   = newStart + safeNewDuration
 
   return existing.some((apt) => {
     // Skip the appointment being edited
@@ -273,10 +274,10 @@ export async function checkAppointmentConflict(date, time, durationMinutes, excl
     if (!apt.time) return false
 
     const aptStart = toMinutes(apt.time)
-    const aptEnd   = aptStart + (Number(apt.duration) || 60)
+    const safeAptDuration = Math.min(Number(apt.duration) || 60, 720)
+    const aptEnd   = aptStart + safeAptDuration
 
     // Standard interval overlap check: [newStart, newEnd) ∩ [aptStart, aptEnd) ≠ ∅
     return newStart < aptEnd && newEnd > aptStart
   })
 }
-
