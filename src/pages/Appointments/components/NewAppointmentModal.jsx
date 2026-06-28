@@ -8,8 +8,10 @@ import toast from 'react-hot-toast'
 import { useClients } from '@/hooks/useClients'
 import { useServices } from '@/hooks/useServices'
 import { useCreateAppointment, useUpdateAppointmentDetails } from '@/hooks/useAppointments'
+import { useAuth } from '@/context/AuthContext'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
 import { BUSINESS_HOURS } from '@/constants/app'
+import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -46,18 +48,12 @@ const schema = z.object({
     })
   }
 
-  // Validate that the appointment is not in the past
-  const now = new Date()
-  if (appointmentTime < now) {
-    ctx.addIssue({
-      path: ['date'],
-      code: z.ZodIssueCode.custom,
-      message: 'No se pueden agendar turnos en el pasado',
-    })
-  }
+  // NOTA: La validación de turnos en el pasado se maneja en onSubmit
+  // según el rol del usuario (admin puede agendar en pasado, cliente no).
 })
 
 function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit = null }) {
+  const { role } = useAuth()
   const { data: clients, isLoading: loadingClients } = useClients()
   const { data: services, isLoading: loadingServices } = useServices()
   const { mutateAsync: createAppointment, isPending: isCreating } = useCreateAppointment()
@@ -108,6 +104,14 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, appointmentToEdit =
 
       if (!client || !service) {
         toast.error('Error al obtener datos')
+        return
+      }
+
+      // Validar que el usuario pueda agendar en esta fecha/hora
+      // Los administradores pueden agendar en cualquier momento (pasado incluido)
+      const dateValidation = validateAppointmentDateTime(data.date, data.time, role)
+      if (!dateValidation.valid) {
+        toast.error(dateValidation.message)
         return
       }
 

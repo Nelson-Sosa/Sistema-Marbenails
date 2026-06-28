@@ -10,6 +10,7 @@ import { useActiveCategories } from '@/hooks/useServiceCategories'
 import { useCreateAppointment } from '@/hooks/useAppointments'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
 import { BUSINESS_HOURS } from '@/constants/app'
+import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
@@ -30,10 +31,7 @@ const SCHEMA_STEP2 = z.object({
   if (data.time < BUSINESS_HOURS.START || data.time > BUSINESS_HOURS.END) {
     ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: `El horario de atención es de ${BUSINESS_HOURS.START} a ${BUSINESS_HOURS.END}` })
   }
-  const now = new Date()
-  if (appointmentTime < now) {
-    ctx.addIssue({ path: ['date'], code: z.ZodIssueCode.custom, message: 'No se pueden agendar turnos en el pasado' })
-  }
+  // NOTA: La validación de turnos en el pasado se maneja en onSubmit según el rol.
   const minAllowedTime = new Date(Date.now() + 2 * 60 * 60 * 1000)
   if (appointmentTime < minAllowedTime) {
     ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: 'Debe ser con al menos 2 hs de anticipación' })
@@ -43,7 +41,7 @@ const SCHEMA_STEP2 = z.object({
 const STEPS = { CATEGORY: 0, SERVICE: 1, DETAILS: 2 }
 
 function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
-  const { userProfile, user } = useAuth()
+  const { userProfile, user, role } = useAuth()
   const { data: services, isLoading: loadingServices } = useServices()
   const { data: categories } = useActiveCategories()
   const { mutateAsync: createAppointment, isPending } = useCreateAppointment()
@@ -101,6 +99,14 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
     try {
       if (!selectedService || !userProfile) {
         toast.error('Error al obtener datos')
+        return
+      }
+
+      // Validar que el usuario pueda agendar en esta fecha/hora
+      // Los administradores pueden agendar en cualquier momento (pasado incluido)
+      const dateValidation = validateAppointmentDateTime(data.date, data.time, role)
+      if (!dateValidation.valid) {
+        toast.error(dateValidation.message)
         return
       }
 

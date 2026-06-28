@@ -60,14 +60,16 @@ service cloud.firestore {
 
     // ─── TURNOS ───
     match /appointments/{docId} {
-      // Admin tiene control total sobre todos los turnos
+      // Admin tiene control total sobre todos los turnos (incluyendo pasados)
       allow read, write: if isAdmin();
 
       // Usuario: puede leer TODOS los turnos (necesario para verificar disponibilidad en el frontend)
       allow read: if isAuthenticated();
 
-      // Usuario: solo puede crear turnos a su propio nombre
-      allow create: if isAuthenticated() && request.resource.data.clientId == request.auth.uid;
+      // Usuario: solo puede crear turnos a futuro y a su propio nombre
+      allow create: if isAuthenticated()
+        && request.resource.data.clientId == request.auth.uid
+        && request.resource.data.date >= request.time;
 
       // Usuario: solo puede cancelar (status='cancelled') sus propios turnos.
       allow update: if isAuthenticated()
