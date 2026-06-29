@@ -264,6 +264,17 @@ function LoginPage() {
             Continuar con Google
           </Button>
 
+          {/* Link to register */}
+          <p className="mt-6 text-center text-sm text-slate-400">
+            ¿No tenés cuenta?{' '}
+            <Link
+              to={ROUTES.REGISTER}
+              className="text-rose-400 hover:text-rose-300 hover:underline"
+            >
+              Registrate
+            </Link>
+          </p>
+
           {/* Footer */}
           <p className="mt-8 text-center text-xs text-slate-600">
             {APP_NAME} © {new Date().getFullYear()}. Sistema de gestión privado.

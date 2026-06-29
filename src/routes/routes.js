@@ -6,6 +6,7 @@
 export const ROUTES = {
   // Public routes
   LOGIN: '/login',
+  REGISTER: '/register',
 
   // Protected routes
   DASHBOARD: '/dashboard',
