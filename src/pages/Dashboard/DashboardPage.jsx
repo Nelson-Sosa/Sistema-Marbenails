@@ -43,18 +43,18 @@ function DashboardPage() {
       {/* ── Premium Header ─────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
+          <h1 className="text-2xl font-semibold tracking-tight text-brand-text">
             {greeting}, {firstName} 👋
           </h1>
-          <p className="mt-1 text-sm text-slate-400/80">
+          <p className="mt-1 text-sm text-brand-text-muted">
             Resumen operativo del sal&oacute;n
           </p>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <p className="mt-0.5 text-xs text-brand-text-muted">
             {dateStr}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-xs text-slate-500">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
+        <div className="flex items-center gap-2 rounded-full border border-brand-pastel bg-brand-pastel/30 px-4 py-2 text-xs text-brand-text-muted">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-success" />
           En vivo
         </div>
       </div>
@@ -69,13 +69,13 @@ function DashboardPage() {
         ].map(({ icon: Icon, value, label, color, bg }) => (
           <div
             key={label}
-            className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all duration-200 hover:border-white/[0.12] hover:bg-white/[0.04] hover:-translate-y-0.5"
+            className="group rounded-2xl border border-brand-pastel bg-brand-card p-5 shadow-sm shadow-brand-text/5 transition-all duration-200 hover:border-brand-primary/50 hover:shadow-brand-text/10 hover:-translate-y-0.5"
           >
             <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${bg}`}>
               <Icon className={`h-5 w-5 ${color}`} />
             </div>
-            <p className="text-xl sm:text-2xl xl:text-3xl font-bold tracking-tight text-white truncate">{value}</p>
-            <p className="mt-1 text-xs text-slate-500">{label}</p>
+            <p className="text-xl sm:text-2xl xl:text-3xl font-bold tracking-tight text-brand-text truncate">{value}</p>
+            <p className="mt-1 text-xs text-brand-text-muted">{label}</p>
           </div>
         ))}
       </div>
@@ -89,7 +89,7 @@ function DashboardPage() {
             <Card.Header
               title="Agenda de Hoy"
               action={
-                <Link to={ROUTES.APPOINTMENTS} className="text-sm text-rose-400/80 hover:text-rose-300 transition-colors">
+                <Link to={ROUTES.APPOINTMENTS} className="text-sm text-brand-primary hover:text-brand-primary-hover transition-colors">
                   Ver todos &rarr;
                 </Link>
               }
@@ -97,8 +97,8 @@ function DashboardPage() {
             <Card.Body className="space-y-3">
               {stats?.todayAppointmentsList?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <CalendarDays className="mb-3 h-8 w-8 text-slate-600" />
-                  <p className="text-sm text-slate-500">No hay turnos agendados para hoy.</p>
+                  <CalendarDays className="mb-3 h-8 w-8 text-brand-text-muted" />
+                  <p className="text-sm text-brand-text-muted">No hay turnos agendados para hoy.</p>
                 </div>
               ) : (
                 stats?.todayAppointmentsList?.slice(0, 5).map((app) => {
@@ -107,28 +107,28 @@ function DashboardPage() {
                   return (
                     <div
                       key={app.id}
-                      className="group flex items-center gap-4 rounded-xl border border-white/[0.04] bg-white/[0.01] p-4 transition-all duration-200 hover:border-white/[0.1] hover:bg-white/[0.03] hover:-translate-y-0.5"
+                      className="group flex items-center gap-4 rounded-xl border border-transparent bg-transparent p-4 transition-all duration-200 hover:bg-brand-pastel/30 hover:-translate-y-0.5"
                     >
                       {/* Time accent */}
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-sm font-semibold text-white">{app.time}</span>
-                        <div className="h-6 w-0.5 rounded-full bg-white/[0.06]" />
+                        <span className="text-sm font-semibold text-brand-text">{app.time}</span>
+                        <div className="h-6 w-0.5 rounded-full bg-brand-pastel" />
                       </div>
 
                       {/* Avatar with initial */}
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-sm font-semibold text-rose-400">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-sm font-semibold text-brand-primary">
                         {initial}
                       </div>
 
                       {/* Info */}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium text-white">{app.clientName}</p>
-                        <p className="mt-0.5 truncate text-xs text-slate-500">{app.serviceName}</p>
+                        <p className="truncate font-medium text-brand-text">{app.clientName}</p>
+                        <p className="mt-0.5 truncate text-xs text-brand-text-muted">{app.serviceName}</p>
                       </div>
 
                       {/* Price (hidden on small screens) */}
                       <div className="hidden sm:block text-right">
-                        <p className="text-sm font-medium text-slate-300">{formatCurrency(app.price)}</p>
+                        <p className="text-sm font-medium text-brand-text-muted">{formatCurrency(app.price)}</p>
                       </div>
 
                       {/* Status badge */}
@@ -158,21 +158,21 @@ function DashboardPage() {
                       <Clock className="h-6 w-6 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold tracking-tight text-white">
+                      <p className="text-2xl font-bold tracking-tight text-brand-text">
                         {stats.nextAppointment.time}
                       </p>
-                      <p className="text-sm text-slate-400">{stats.nextAppointment.clientName}</p>
+                      <p className="text-sm text-brand-text-muted">{stats.nextAppointment.clientName}</p>
                     </div>
                   </div>
-                  <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+                  <div className="rounded-xl border border-brand-pastel bg-brand-pastel/10 px-4 py-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-500">Servicio</span>
-                      <span className="font-medium text-white">{stats.nextAppointment.serviceName}</span>
+                      <span className="text-brand-text-muted">Servicio</span>
+                      <span className="font-medium text-brand-text">{stats.nextAppointment.serviceName}</span>
                     </div>
                   </div>
                   <Link
                     to={ROUTES.APPOINTMENTS}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/[0.08] py-2.5 text-sm text-slate-300 transition-all duration-200 hover:border-white/[0.15] hover:bg-white/[0.03]"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-pastel py-2.5 text-sm text-brand-text-muted transition-all duration-200 hover:border-brand-primary/50 hover:text-brand-primary"
                   >
                     Ver turno
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -180,8 +180,8 @@ function DashboardPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Clock className="mb-3 h-8 w-8 text-slate-600" />
-                  <p className="text-sm text-slate-500">No hay pr&oacute;ximos turnos.</p>
+                  <Clock className="mb-3 h-8 w-8 text-brand-text-muted" />
+                  <p className="text-sm text-brand-text-muted">No hay pr&oacute;ximos turnos.</p>
                 </div>
               )}
             </Card.Body>
@@ -197,12 +197,12 @@ function DashboardPage() {
                   return (
                     <div key={svc.name}>
                       <div className="mb-1.5 flex items-center justify-between">
-                        <span className="text-sm font-medium text-white">{svc.name}</span>
-                        <span className="text-xs text-slate-500">{pct}% &middot; {svc.count} turnos</span>
+                        <span className="text-sm font-medium text-brand-text">{svc.name}</span>
+                        <span className="text-xs text-brand-text-muted">{pct}% &middot; {svc.count} turnos</span>
                       </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-white/[0.04]">
+                      <div className="h-2 overflow-hidden rounded-full bg-brand-pastel/30">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-500"
+                          className="h-full rounded-full bg-brand-primary transition-all duration-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -210,7 +210,7 @@ function DashboardPage() {
                   )
                 })
               ) : (
-                <div className="py-6 text-center text-sm text-slate-500">
+                <div className="py-6 text-center text-sm text-brand-text-muted">
                   Sin servicios este mes.
                 </div>
               )}

@@ -37,11 +37,11 @@ const Input = forwardRef(function Input(
       {label && (
         <label
           htmlFor={inputId}
-          className="text-sm font-medium text-slate-300"
+          className="text-sm font-medium text-brand-text-muted"
         >
           {label}
           {required && (
-            <span className="ml-1 text-rose-400" aria-hidden="true">
+            <span className="ml-1 text-brand-primary" aria-hidden="true">
               *
             </span>
           )}
@@ -52,7 +52,7 @@ const Input = forwardRef(function Input(
       <div className="relative flex items-center">
         {/* Left icon */}
         {leftIcon && (
-          <div className="pointer-events-none absolute left-3 text-slate-400">
+          <div className="pointer-events-none absolute left-3 text-brand-text-muted">
             {leftIcon}
           </div>
         )}
@@ -65,14 +65,14 @@ const Input = forwardRef(function Input(
             error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
           }
           className={cn(
-            'w-full rounded-lg border bg-slate-900 px-3 py-2.5 text-base sm:text-sm text-white',
-            'placeholder:text-slate-500',
+            'w-full rounded-lg border bg-brand-bg px-3 py-2.5 text-base sm:text-sm text-brand-text',
+            'placeholder:text-brand-text-muted',
             'transition-colors duration-200',
-            'focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:ring-offset-slate-950',
+            'focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-1 focus:ring-offset-brand-bg',
             // Border state
             error
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-slate-700 hover:border-slate-600 focus:border-rose-500',
+              : 'border-brand-pastel hover:border-brand-primary/50 focus:border-brand-primary',
             // Icon padding
             leftIcon && 'pl-10',
             rightIcon && 'pr-10',
@@ -84,7 +84,7 @@ const Input = forwardRef(function Input(
 
         {/* Right icon */}
         {rightIcon && (
-          <div className="absolute right-3 text-slate-400">{rightIcon}</div>
+          <div className="absolute right-3 text-brand-text-muted">{rightIcon}</div>
         )}
       </div>
 
@@ -101,7 +101,7 @@ const Input = forwardRef(function Input(
 
       {/* Helper text */}
       {!error && helperText && (
-        <p id={`${inputId}-helper`} className="text-xs text-slate-500">
+        <p id={`${inputId}-helper`} className="text-xs text-brand-text-muted">
           {helperText}
         </p>
       )}
