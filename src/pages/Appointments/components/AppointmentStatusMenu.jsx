@@ -42,7 +42,7 @@ function AppointmentStatusMenu({ currentStatus, onChange }) {
         transition
         transitionDuration={150}
       >
-        <div className="w-48 rounded-xl border border-slate-800 bg-slate-900 shadow-xl shadow-slate-950/50 py-1">
+        <div className="w-48 rounded-xl border border-brand-border bg-brand-card shadow-xl shadow-black/10 py-1">
           {Object.entries(STATUS_CONFIG).map(([status, { label, variant }]) => {
             const Icon = STATUS_ICONS[status] || Clock
             return (
@@ -54,8 +54,8 @@ function AppointmentStatusMenu({ currentStatus, onChange }) {
                 }}
                 disabled={status === currentStatus}
                 className={cn(
-                  'flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-slate-800',
-                  status === currentStatus ? 'text-rose-400 opacity-50' : 'text-slate-300'
+                  'flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-brand-pastel/30',
+                  status === currentStatus ? 'text-brand-primary opacity-50' : 'text-brand-text'
                 )}
               >
                 <Icon className="h-4 w-4" />

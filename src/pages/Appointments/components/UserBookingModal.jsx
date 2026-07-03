@@ -153,13 +153,13 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
         <div key={s} className="flex items-center gap-2">
           <div className={cn(
             'flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors',
-            step === s ? 'bg-rose-500 text-white' :
+            step === s ? 'bg-brand-primary text-white' :
             step > s ? 'bg-emerald-500/20 text-emerald-400' :
-            'bg-slate-800 text-slate-500'
+            'bg-brand-pastel text-brand-text-muted'
           )}>
             {step > s ? <Check className="h-3 w-3" /> : i + 1}
           </div>
-          {i < 2 && <div className={cn('h-px w-6', step > s ? 'bg-emerald-500/30' : 'bg-slate-800')} />}
+          {i < 2 && <div className={cn('h-px w-6', step > s ? 'bg-emerald-500/30' : 'bg-brand-border')} />}
         </div>
       ))}
     </div>
@@ -167,9 +167,9 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 shadow-2xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white z-50">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-lg rounded-2xl border border-brand-border bg-brand-card p-4 sm:p-6 shadow-2xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
+        <button onClick={onClose} className="absolute right-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel/30 hover:text-brand-text z-50">
           <X className="h-5 w-5" />
         </button>
 
@@ -180,32 +180,32 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
               setSelectedServiceId(null)
               setStep(availableCategories.length > 0 ? STEPS.CATEGORY : STEPS.SERVICE)
             }
-          }} className="absolute left-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white">
+          }} className="absolute left-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel/30 hover:text-brand-text">
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
 
-        <h2 className="text-xl font-bold text-white text-center">Reservar Turno</h2>
-        <p className="mb-4 mt-1 text-center text-sm text-slate-400">Podés agendar con hasta 2 horas de anticipación.</p>
+        <h2 className="text-xl font-bold text-brand-text text-center">Reservar Turno</h2>
+        <p className="mb-4 mt-1 text-center text-sm text-brand-text-muted">Podés agendar con hasta 2 horas de anticipación.</p>
 
         {availableCategories.length > 0 && renderProgress()}
 
         {/* Step 0: Category selection */}
         {step === STEPS.CATEGORY && (
           <div className="space-y-3">
-            <p className="text-sm font-medium text-slate-200">Elegí una categoría</p>
+            <p className="text-sm font-medium text-brand-text">Elegí una categoría</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {availableCategories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => { setSelectedCategoryId(cat.id); setStep(STEPS.SERVICE) }}
                   className={cn(
-                    'rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-left transition-all duration-200',
-                    'hover:border-rose-500/30 hover:bg-rose-500/5'
+                    'rounded-xl border border-brand-border bg-brand-card p-4 text-left transition-all duration-200',
+                    'hover:border-brand-primary/30 hover:bg-brand-pastel/30'
                   )}
                 >
-                  <p className="font-medium text-white">{cat.name}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="font-medium text-brand-text">{cat.name}</p>
+                  <p className="mt-1 text-xs text-brand-text-muted">
                     {services?.filter((s) => s.categoryId === cat.id && s.active !== false).length} servicios
                   </p>
                 </button>
@@ -217,13 +217,13 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
         {/* Step 1: Service selection */}
         {step === STEPS.SERVICE && (
           <div className="space-y-3">
-            <p className="text-sm font-medium text-slate-200">
+            <p className="text-sm font-medium text-brand-text">
               {selectedCategoryId
                 ? `Servicios de ${categories?.find((c) => c.id === selectedCategoryId)?.name || ''}`
                 : 'Seleccioná un servicio'}
             </p>
             {loadingServices ? (
-              <p className="text-sm text-slate-500">Cargando servicios...</p>
+              <p className="text-sm text-brand-text-muted">Cargando servicios...</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {(selectedCategoryId ? servicesByCategory : services?.filter((s) => s.active !== false) || []).map((svc) => (
@@ -231,19 +231,19 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
                     key={svc.id}
                     onClick={() => { setSelectedServiceId(svc.id); setStep(STEPS.DETAILS) }}
                     className={cn(
-                      'flex w-full items-center justify-between rounded-xl border border-white/[0.04] bg-white/[0.01] p-4 text-left transition-all duration-200',
-                      'hover:border-rose-500/30 hover:bg-rose-500/5'
+                      'flex w-full items-center justify-between rounded-xl border border-brand-border bg-brand-card p-4 text-left transition-all duration-200',
+                      'hover:border-brand-primary/30 hover:bg-brand-pastel/30'
                     )}
                   >
                     <div>
-                      <p className="font-medium text-white">{svc.name}</p>
-                      <p className="mt-0.5 text-xs text-slate-500">{svc.duration} min</p>
+                      <p className="font-medium text-brand-text">{svc.name}</p>
+                      <p className="mt-0.5 text-xs text-brand-text-muted">{svc.duration} min</p>
                     </div>
                     <p className="font-semibold text-emerald-400">{formatCurrency(svc.price)}</p>
                   </button>
                 ))}
                 {selectedCategoryId && servicesByCategory.length === 0 && (
-                  <p className="text-sm text-slate-500">No hay servicios en esta categoría.</p>
+                  <p className="text-sm text-brand-text-muted">No hay servicios en esta categoría.</p>
                 )}
               </div>
             )}
@@ -254,13 +254,13 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
         {step === STEPS.DETAILS && (
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
             {selectedService && (
-              <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-500/10">
-                  <Clock className="h-4 w-4 text-rose-400" />
+              <div className="flex items-center gap-3 rounded-xl border border-brand-border bg-brand-card p-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-pastel">
+                  <Clock className="h-4 w-4 text-brand-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">{selectedService.name}</p>
-                  <p className="text-xs text-slate-500">{formatCurrency(selectedService.price)} · {selectedService.duration} min</p>
+                  <p className="text-sm font-medium text-brand-text">{selectedService.name}</p>
+                  <p className="text-xs text-brand-text-muted">{formatCurrency(selectedService.price)} · {selectedService.duration} min</p>
                 </div>
               </div>
             )}

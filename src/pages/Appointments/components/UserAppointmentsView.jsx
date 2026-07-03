@@ -99,8 +99,8 @@ export default function UserAppointmentsView() {
       {/* ── Header & Actions ──────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Mis Turnos</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-brand-text">Mis Turnos</h1>
+          <p className="mt-1 text-sm text-brand-text-muted">
             Revisá tu historial y próximos turnos agendados.
           </p>
         </div>
@@ -123,22 +123,22 @@ export default function UserAppointmentsView() {
             {appointments.map((appointment) => (
               <div 
                 key={appointment.id} 
-                className="flex flex-col rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm"
+                className="flex flex-col rounded-xl border border-brand-border bg-brand-card p-4 shadow-sm"
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-brand-text">
                     {appointment.serviceName}
                   </span>
                   {getStatusBadge(appointment.status)}
                 </div>
                 
-                <div className="mt-2 flex flex-col gap-1 text-sm text-slate-400">
+                <div className="mt-2 flex flex-col gap-1 text-sm text-brand-text-muted">
                   <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
+                    <CalendarDays className="h-4 w-4 text-brand-text-muted" />
                     {appointment.date?.seconds ? format(new Date(appointment.date.seconds * 1000), "EEEE d 'de' MMMM", { locale: es }) : 'Fecha pendiente'}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="font-mono text-slate-300">{appointment.time} hs</span>
+                    <span className="font-mono text-brand-text">{appointment.time} hs</span>
                     <span>•</span>
                     <span>{formatCurrency(servicePriceMap[appointment.serviceId] ?? appointment.price)}</span>
                   </span>
@@ -147,11 +147,11 @@ export default function UserAppointmentsView() {
                 {/* Cancel button — only for pending or confirmed appointments */}
                 {(appointment.status === APPOINTMENT_STATUS.PENDING ||
                   appointment.status === APPOINTMENT_STATUS.CONFIRMED) && (
-                  <div className="mt-4 flex justify-end border-t border-slate-800 pt-3">
+                  <div className="mt-4 flex justify-end border-t border-brand-border pt-3">
                     <button
                       onClick={() => handleCancel(appointment.id)}
                       disabled={isCancelling}
-                      className="text-xs font-medium text-rose-400 hover:text-rose-300 disabled:opacity-50 transition-colors"
+                      className="text-xs font-medium text-brand-primary hover:text-brand-primary-hover disabled:opacity-50 transition-colors"
                     >
                       {isCancelling ? 'Cancelando...' : 'Cancelar turno'}
                     </button>
@@ -161,10 +161,10 @@ export default function UserAppointmentsView() {
             ))}
           </div>
         ) : (
-          <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-900/50">
-            <CalendarDays className="mb-3 h-10 w-10 text-slate-600" />
-            <p className="text-lg font-medium text-slate-300">Aún no tenés turnos</p>
-            <p className="mt-1 text-sm text-slate-500">Explorá nuestros servicios y reservá tu primer turno.</p>
+          <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-brand-border bg-brand-bg">
+            <CalendarDays className="mb-3 h-10 w-10 text-brand-text-muted" />
+            <p className="text-lg font-medium text-brand-text">Aún no tenés turnos</p>
+            <p className="mt-1 text-sm text-brand-text-muted">Explorá nuestros servicios y reservá tu primer turno.</p>
             <Button 
               className="mt-4"
               variant="secondary"

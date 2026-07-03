@@ -172,27 +172,27 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 shadow-2xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg rounded-2xl border border-brand-border bg-brand-card p-4 sm:p-6 shadow-2xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
         <button 
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white z-50"
+          className="absolute right-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel/30 hover:text-brand-text z-50"
         >
           <X className="h-5 w-5" />
         </button>
 
-          <h2 className="text-xl font-bold text-white">{isEditing ? 'Editar Turno' : 'Agendar Turno'}</h2>
+          <h2 className="text-xl font-bold text-brand-text">{isEditing ? 'Editar Turno' : 'Agendar Turno'}</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           {/* Client Select */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-200">Cliente</label>
+            <label className="text-sm font-medium text-brand-text">Cliente</label>
             <select
               className={cn(
-                'h-10 w-full rounded-lg border bg-slate-950 px-3 text-sm text-white',
-                errors.clientId ? 'border-red-500/50 focus:border-red-500' : 'border-slate-800 focus:border-rose-500 focus:ring-1 focus:ring-rose-500',
+                'h-10 w-full rounded-lg border bg-brand-bg px-3 text-sm text-brand-text',
+                errors.clientId ? 'border-red-500/50 focus:border-red-500' : 'border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary',
                 isEditing && 'opacity-70 cursor-not-allowed'
               )}
               disabled={loadingClients || isEditing}
@@ -204,16 +204,16 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
               ))}
             </select>
             {errors.clientId && <p className="text-xs text-red-400">{errors.clientId.message}</p>}
-            {isEditing && <p className="text-xs text-slate-500">El cliente no se puede modificar.</p>}
+            {isEditing && <p className="text-xs text-brand-text-muted">El cliente no se puede modificar.</p>}
           </div>
 
           {/* Service Select */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-200">Servicio</label>
+            <label className="text-sm font-medium text-brand-text">Servicio</label>
             <select
               className={cn(
-                'h-10 w-full rounded-lg border bg-slate-950 px-3 text-sm text-white',
-                errors.serviceId ? 'border-red-500/50 focus:border-red-500' : 'border-slate-800 focus:border-rose-500 focus:ring-1 focus:ring-rose-500'
+                'h-10 w-full rounded-lg border bg-brand-bg px-3 text-sm text-brand-text',
+                errors.serviceId ? 'border-red-500/50 focus:border-red-500' : 'border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary'
               )}
               disabled={loadingServices}
               {...register('serviceId')}
