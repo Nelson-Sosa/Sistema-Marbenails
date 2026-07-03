@@ -28,10 +28,10 @@ function ServiceCard({ service, isAdmin, onBook, onEdit }) {
 
   return (
     <>
-      <div className="flex flex-col justify-between rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
+      <div className="flex flex-col justify-between rounded-xl border border-brand-pastel bg-brand-card p-5 shadow-sm shadow-brand-text/5">
         <div>
           <div className="flex items-start justify-between">
-            <h3 className="text-lg font-semibold text-white">{service.name}</h3>
+            <h3 className="text-lg font-semibold text-brand-text">{service.name}</h3>
             {isAdmin && (
               <div className="flex items-center gap-2">
                 <Badge variant={service.active ? 'success' : 'default'} dot>
@@ -53,15 +53,15 @@ function ServiceCard({ service, isAdmin, onBook, onEdit }) {
           </div>
 
           {service.description && (
-            <p className="mt-2 text-sm text-slate-400 line-clamp-2">{service.description}</p>
+            <p className="mt-2 text-sm text-brand-text-muted line-clamp-2">{service.description}</p>
           )}
 
-          <div className="mt-4 flex items-center justify-between border-t border-slate-800/50 pt-4">
-            <div className="flex items-center gap-1.5 text-sm text-slate-400">
+          <div className="mt-4 flex items-center justify-between border-t border-brand-pastel pt-4">
+            <div className="flex items-center gap-1.5 text-sm text-brand-text-muted">
               <Clock className="h-4 w-4" />
               <span>{service.duration} min</span>
             </div>
-            <span className="text-lg font-bold text-emerald-400">
+            <span className="text-lg font-bold text-brand-success">
               {formatCurrency(service.price)}
             </span>
           </div>

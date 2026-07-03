@@ -14,61 +14,19 @@
   /* Typography */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  /* ── Brand Color Palette ── */
-  /* Dusty Rose (primary brand) — sophisticated, muted, elegant */
-  --color-rose-50: #fdf2f6;
-  --color-rose-100: #fce4ea;
-  --color-rose-200: #f7c9d5;
-  --color-rose-300: #f0a8bc;
-  --color-rose-400: #e088a2;
-  --color-rose-500: #d4708b;
-  --color-rose-600: #b85872;
-  --color-rose-700: #98445a;
-  --color-rose-800: #7a3446;
-  --color-rose-900: #5e2836;
+  /* ── Brand Color Palette (Light & Soft) ── */
+  --color-brand-bg: #FFF9FA;
+  --color-brand-card: #FFFFFF;
+  --color-brand-primary: #E8829A;
+  --color-brand-primary-hover: #D96C86;
+  --color-brand-pastel: #F9D4DD;
+  --color-brand-text: #3A3A3A;
+  --color-brand-text-muted: #8A8A8A;
+  --color-brand-text-inverse: #FFFFFF;
+  --color-brand-success: #4CAF7D;
 
-  /* Muted Pink (secondary accent) */
-  --color-pink-400: #e8a0b8;
-  --color-pink-500: #d488a0;
-  --color-pink-600: #b86e88;
-
-  /* Soft Violet (tertiary accent) */
-  --color-violet-50: #f5f3ff;
-  --color-violet-100: #ede9fe;
-  --color-violet-200: #ddd6fe;
-  --color-violet-300: #c4b5fd;
-  --color-violet-400: #a99ae8;
-  --color-violet-500: #9386d8;
-  --color-violet-600: #7c6ec4;
-  --color-violet-700: #6558a8;
-
-  /* Slate (backgrounds & surfaces) */
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
-
-  /* Surface — subtle layer between background and cards for depth */
-  --color-surface: #070c17;
-
-  /* Semantic colors */
-  --color-emerald-400: #34d399;
-  --color-emerald-500: #10b981;
-  --color-emerald-600: #059669;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-sky-400: #38bdf8;
-  --color-sky-500: #0ea5e9;
-  --color-red-400: #f87171;
-  --color-red-500: #ef4444;
-  --color-red-600: #dc2626;
+  /* We keep semantic tailwind colors for compatibility but override primary rose and slate if needed, 
+     but it's better to explicitly use brand colors in the components. */
 
   /* Border radius tokens */
   --radius-sm: 0.375rem;   /* 6px */
@@ -135,13 +93,13 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: var(--color-slate-950);
-    color: var(--color-slate-100);
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

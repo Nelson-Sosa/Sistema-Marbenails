@@ -27,7 +27,7 @@ function AppLayout() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-slate-950">
+    <div className="flex h-[100dvh] overflow-hidden bg-brand-bg">
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
       <Sidebar
         isCollapsed={isCollapsed}

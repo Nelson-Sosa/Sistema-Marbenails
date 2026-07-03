@@ -27,7 +27,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
       {/* ── Mobile Overlay Backdrop ─────────────────────────────────────── */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-20 bg-slate-950/80 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={onMobileClose}
           aria-hidden="true"
         />
@@ -39,7 +39,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
         aria-label="Navegación principal"
         className={cn(
           'fixed top-0 left-0 z-30 flex h-[100dvh] flex-col',
-          'border-r border-slate-800/50 bg-slate-950',
+          'border-r border-brand-pastel bg-brand-bg',
           'transition-all duration-300 ease-in-out',
           'hidden lg:flex',
           isCollapsed ? 'lg:w-16' : 'lg:w-56',
@@ -52,15 +52,15 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
         {/* ── Logo / Brand ───────────────────────────────────────────── */}
         <div
           className={cn(
-            'flex h-16 items-center border-b border-slate-800/50',
+            'flex h-16 items-center border-b border-brand-pastel',
             isCollapsed ? 'justify-center px-2' : 'gap-3 px-4'
           )}
         >
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500/70 to-violet-500/70 shadow-md shadow-rose-500/15">
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-primary shadow-sm shadow-brand-primary/20">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           {!isCollapsed && (
-            <span className="text-base font-semibold tracking-tight text-white">
+            <span className="text-base font-semibold tracking-tight text-brand-text">
               {APP_NAME}
             </span>
           )}
@@ -70,7 +70,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
         <nav className="flex-1 overflow-y-auto py-4">
           {loadingRole ? (
             <div className="flex h-full items-center justify-center">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-600 border-t-rose-500" />
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-pastel border-t-brand-primary" />
             </div>
           ) : (
             <ul className="flex flex-col gap-0.5 px-2" role="list">
@@ -86,10 +86,10 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
                       cn(
                         'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 min-h-[44px]',
                         'text-sm font-medium transition-all duration-200',
-                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50',
                         isActive
-                          ? 'bg-white/[0.03] text-white border-l-2 border-rose-500/25 rounded-l-none pl-[calc(0.75rem-2px)]'
-                          : 'text-slate-400 hover:bg-white/[0.02] hover:text-slate-200',
+                          ? 'bg-brand-pastel/30 text-brand-primary border-l-2 border-brand-primary rounded-l-none pl-[calc(0.75rem-2px)]'
+                          : 'text-brand-text-muted hover:bg-brand-pastel/20 hover:text-brand-primary-hover',
                         isCollapsed && 'justify-center px-2 border-l-0 rounded-l-lg'
                       )
                     }
@@ -100,8 +100,8 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
                           className={cn(
                             'h-5 w-5 flex-shrink-0 transition-colors duration-200',
                             isActive
-                              ? 'text-rose-400'
-                              : 'text-slate-500 group-hover:text-slate-300'
+                              ? 'text-brand-primary'
+                              : 'text-brand-text-muted group-hover:text-brand-primary-hover'
                           )}
                           aria-hidden="true"
                         />
@@ -118,7 +118,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
         </nav>
 
         {/* ── Collapse Toggle (desktop only) ─────────────────────────── */}
-        <div className="hidden border-t border-slate-800/50 p-2 lg:block">
+        <div className="hidden border-t border-brand-pastel p-2 lg:block">
           <button
             onClick={onToggleCollapse}
             title={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
@@ -127,9 +127,9 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
             aria-controls="main-sidebar"
             className={cn(
               'flex w-full items-center rounded-lg px-3 py-2 min-h-[44px]',
-              'text-sm text-slate-500 transition-colors duration-200',
-              'hover:bg-white/[0.03] hover:text-slate-300',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50',
+              'text-sm text-brand-text-muted transition-colors duration-200',
+              'hover:bg-brand-pastel/20 hover:text-brand-primary',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50',
               isCollapsed ? 'justify-center' : 'gap-3'
             )}
           >

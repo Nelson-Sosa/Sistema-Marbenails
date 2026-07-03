@@ -7,17 +7,17 @@ import Spinner from '@/components/ui/Spinner'
  */
 const variantClasses = {
   primary:
-    'bg-gradient-to-r from-rose-500/90 to-violet-500/90 text-white hover:from-rose-600 hover:to-violet-600 active:from-rose-700 active:to-violet-700 shadow-sm shadow-rose-500/10',
+    'bg-brand-primary text-white hover:bg-brand-primary-hover active:bg-brand-primary-hover shadow-sm shadow-brand-primary/20',
   secondary:
-    'bg-slate-800/50 text-slate-200 hover:bg-slate-700/80 active:bg-slate-700 border border-slate-700/50 backdrop-blur-sm',
+    'bg-brand-card text-brand-text hover:bg-brand-pastel/30 active:bg-brand-pastel/50 border border-brand-pastel',
   outline:
-    'border border-rose-500/40 text-rose-300 hover:bg-rose-500/8 active:bg-rose-500/15',
+    'border border-brand-primary text-brand-primary hover:bg-brand-primary/5 active:bg-brand-primary/10',
   ghost:
-    'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200 active:bg-white/[0.06]',
+    'text-brand-text-muted hover:bg-brand-pastel/30 hover:text-brand-primary active:bg-brand-pastel/50',
   danger:
     'bg-red-500/90 text-white hover:bg-red-600 active:bg-red-700 shadow-sm shadow-red-500/10',
   success:
-    'bg-emerald-500/90 text-white hover:bg-emerald-600 active:bg-emerald-700',
+    'bg-brand-success text-white hover:bg-emerald-600 active:bg-emerald-700',
 }
 
 const sizeClasses = {
@@ -77,7 +77,7 @@ const Button = forwardRef(function Button(
         // Base styles
         'inline-flex items-center justify-center rounded-lg font-medium',
         'transition-all duration-200 ease-in-out',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg',
         'disabled:pointer-events-none disabled:opacity-50',
         // Variants & sizes
         variantClasses[variant],
