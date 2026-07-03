@@ -40,8 +40,8 @@ export default function AdminAgendaView() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-4">
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-white">Agenda de Turnos</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <h1 className="text-2xl font-bold text-brand-text">Agenda de Turnos</h1>
+            <p className="mt-1 text-sm text-brand-text-muted">
               Gestioná los turnos del día y actualizá sus estados.
             </p>
           </div>

@@ -255,8 +255,8 @@ export default function WeeklyAgendaView() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold text-white">Agenda de Turnos</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-brand-text">Agenda de Turnos</h1>
+          <p className="mt-1 text-sm text-brand-text-muted">
             Hacé clic en un turno para ver los detalles o en un espacio libre para agendar.
           </p>
         </div>
@@ -270,8 +270,8 @@ export default function WeeklyAgendaView() {
       </div>
 
       {/* ── Week Navigator ──────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-800 bg-slate-900 p-2">
-        <Button variant="ghost" size="sm" onClick={handlePrevWeek}>
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-brand-pastel bg-brand-primary-hover p-2">
+        <Button variant="ghost" size="sm" onClick={handlePrevWeek} className="text-white hover:text-white/80">
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
@@ -280,14 +280,14 @@ export default function WeeklyAgendaView() {
             {weekLabel}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">{yearLabel}</span>
-            <button onClick={handleThisWeek} className="text-xs text-rose-400 hover:underline whitespace-nowrap">
+            <span className="text-xs text-white/70">{yearLabel}</span>
+            <button onClick={handleThisWeek} className="text-xs text-white hover:underline whitespace-nowrap">
               Esta semana
             </button>
           </div>
         </div>
 
-        <Button variant="ghost" size="sm" onClick={handleNextWeek}>
+        <Button variant="ghost" size="sm" onClick={handleNextWeek} className="text-white hover:text-white/80">
           <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
@@ -298,12 +298,12 @@ export default function WeeklyAgendaView() {
           <Spinner size="lg" />
         </div>
       ) : (
-        <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-slate-800 bg-slate-900">
+        <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-brand-border bg-brand-card">
           <div className="flex flex-col min-w-[780px] select-none">
             {/* ── Sticky Header Row ─────────────────────────────────────── */}
             <div className="sticky top-0 z-30 flex">
-              <div className="sticky left-0 z-30 w-20 flex-shrink-0 flex items-center justify-center border-r border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm h-10 lg:h-14">
-                <span className="text-[10px] lg:text-xs font-medium text-slate-500">
+              <div className="sticky left-0 z-30 w-20 flex-shrink-0 flex items-center justify-center border-r border-b border-brand-border bg-brand-card backdrop-blur-sm h-10 lg:h-14">
+                <span className="text-[10px] lg:text-xs font-medium text-brand-text">
                   Hora
                 </span>
               </div>
@@ -313,17 +313,20 @@ export default function WeeklyAgendaView() {
                   <div
                     key={di}
                     className={cn(
-                      'flex-1 flex flex-col items-center justify-center border-r border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm px-1 lg:px-2 py-1 lg:py-2 last:border-r-0',
-                      isToday && 'bg-rose-500/10'
+                      'flex-1 flex flex-col items-center justify-center border-r border-b border-brand-border backdrop-blur-sm px-1 lg:px-2 py-1 lg:py-2 last:border-r-0',
+                      isToday ? 'bg-brand-primary' : 'bg-brand-pastel'
                     )}
                   >
-                    <span className="text-[10px] lg:text-xs font-semibold uppercase text-slate-400">
+                    <span className={cn(
+                      'text-[10px] lg:text-xs font-semibold uppercase',
+                      isToday ? 'text-white' : 'text-brand-text'
+                    )}>
                       {DAY_LABELS[day.getDay()]}
                     </span>
                     <span
                       className={cn(
                         'mt-0.5 text-sm lg:text-lg font-bold leading-none',
-                        isToday ? 'text-rose-400' : 'text-white'
+                        isToday ? 'text-white' : 'text-brand-text'
                       )}
                     >
                       {format(day, 'd')}
@@ -336,15 +339,13 @@ export default function WeeklyAgendaView() {
             {/* ── Scrollable Body ───────────────────────────────────────── */}
             <div className="flex relative">
               {/* Time gutter (sticky left) — cada fila de 15 minutos muestra su hora exacta */}
-              <div className="sticky left-0 z-20 w-20 flex-shrink-0 bg-slate-900/95">
+              <div className="sticky left-0 z-20 w-20 flex-shrink-0 bg-brand-card">
                 {timeSlots.map((slot) => (
                   <div
                     key={slot.startMin}
                     className={cn(
-                      'border-r flex items-start justify-center pt-1',
-                      slot.startMin % 60 === 0
-                        ? 'border-b border-slate-800/60'
-                        : 'border-b border-slate-800/20'
+                      'border-r border-brand-border flex items-start justify-center pt-1',
+                      'border-b border-brand-border'
                     )}
                     style={{ height: rowHeight }}
                   >
@@ -352,8 +353,8 @@ export default function WeeklyAgendaView() {
                       className={cn(
                         'leading-none',
                         slot.startMin % 60 === 0
-                          ? 'text-[10px] lg:text-xs font-medium text-slate-500'
-                          : 'text-[9px] lg:text-[10px] text-slate-600'
+                          ? 'text-[10px] lg:text-xs font-medium text-brand-text'
+                          : 'text-[9px] lg:text-[10px] text-brand-text-muted'
                       )}
                     >
                       {slot.start}
@@ -371,20 +372,18 @@ export default function WeeklyAgendaView() {
                 return (
                   <div
                     key={di}
-                    className="flex-1 relative border-r border-slate-800/50 last:border-r-0 min-w-[100px] lg:min-w-[130px]"
+                    className="flex-1 relative border-r border-brand-border last:border-r-0 min-w-[100px] lg:min-w-[130px]"
                     style={{ height: totalHeight }}
                   >
                     {/* Background grid — each 15-min block is a click target */}
-                    {timeSlots.map((slot) => (
+                    {timeSlots.map((slot, si) => (
                       <div
                         key={slot.startMin}
                         onClick={() => handleCellClick(day, slot)}
                         className={cn(
-                          'cursor-pointer border-b transition-colors',
-                          slot.startMin % 60 === 0
-                            ? 'border-slate-800/60'
-                            : 'border-slate-800/20',
-                          'hover:bg-emerald-500/5'
+                          'cursor-pointer border-b border-brand-border transition-colors',
+                          'hover:bg-emerald-500/5',
+                          si % 2 === 1 && 'bg-brand-alt-row'
                         )}
                         style={{ height: rowHeight }}
                       />

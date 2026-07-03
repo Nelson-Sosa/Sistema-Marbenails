@@ -24,6 +24,8 @@
   --color-brand-text-muted: #8A8A8A;
   --color-brand-text-inverse: #FFFFFF;
   --color-brand-success: #4CAF7D;
+  --color-brand-border: #F0DDE2;
+  --color-brand-alt-row: #FDF2F5;
 
   /* We keep semantic tailwind colors for compatibility but override primary rose and slate if needed, 
      but it's better to explicitly use brand colors in the components. */
