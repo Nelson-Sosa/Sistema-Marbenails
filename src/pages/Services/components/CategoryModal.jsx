@@ -45,16 +45,16 @@ function CategoryModal({ isOpen, onClose, category }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 shadow-2xl">
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md rounded-2xl border border-brand-pastel bg-brand-card p-4 sm:p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+          className="absolute right-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel hover:text-brand-primary"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-xl font-bold text-white">
+        <h2 className="text-xl font-bold text-brand-text">
           {category ? 'Editar Categoría' : 'Nueva Categoría'}
         </h2>
 
@@ -67,9 +67,9 @@ function CategoryModal({ isOpen, onClose, category }) {
           />
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-200">Descripción (opcional)</label>
+            <label className="text-sm font-medium text-brand-text-muted">Descripción (opcional)</label>
             <textarea
-              className="min-h-[80px] w-full rounded-lg border border-slate-800 bg-slate-950 p-3 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="min-h-[80px] w-full rounded-lg border border-brand-pastel bg-brand-bg p-3 text-sm text-brand-text placeholder-brand-text-muted focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
               placeholder="Descripción de la categoría..."
               {...register('description')}
             />

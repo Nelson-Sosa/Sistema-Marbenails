@@ -46,10 +46,10 @@ function UserDashboardPage() {
     <div className="flex flex-col gap-6 animate-fade-in max-w-3xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
+        <h1 className="text-2xl font-semibold tracking-tight text-brand-text">
           Hola, {userProfile?.displayName || user?.displayName || 'Bienvenida'}
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-brand-text-muted">
           {totalVisits === 0
             ? 'Comienza tu experiencia Marbenails.'
             : `Tienes ${totalVisits} visita${totalVisits !== 1 ? 's' : ''} completada${totalVisits !== 1 ? 's' : ''}.`
@@ -65,20 +65,20 @@ function UserDashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 transition-all duration-300 hover:border-white/[0.1]"
+          className="rounded-2xl border border-brand-pastel bg-brand-card p-6 shadow-sm shadow-brand-text/5 transition-all duration-300 hover:border-brand-primary/50"
         >
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/15 to-violet-500/10">
-              <Sparkles className="h-6 w-6 text-rose-400" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-pastel/30">
+              <Sparkles className="h-6 w-6 text-brand-primary" />
             </span>
             <div className="flex-1">
-              <p className="text-base font-semibold text-white">¿Lista para consentirte?</p>
-              <p className="mt-1 text-sm text-slate-400 leading-relaxed">
+              <p className="text-base font-semibold text-brand-text">¿Lista para consentirte?</p>
+              <p className="mt-1 text-sm text-brand-text-muted leading-relaxed">
                 Reserva tu primer turno y comienza a disfrutar los beneficios de Marbenails.
               </p>
               <button
                 onClick={() => navigate(ROUTES.APPOINTMENTS)}
-                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-500/90 to-violet-500/90 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:from-rose-600 hover:to-violet-600 active:scale-[0.97] transition-all duration-200"
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary-hover active:scale-[0.97] transition-all duration-200"
               >
                 Reservar turno
                 <ArrowRight className="h-4 w-4" />
@@ -94,24 +94,24 @@ function UserDashboardPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 transition-all duration-300 hover:border-white/[0.1]"
+          className="rounded-2xl border border-brand-pastel bg-brand-card p-6 shadow-sm shadow-brand-text/5 transition-all duration-300 hover:border-brand-primary/50"
         >
           <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/15 to-violet-500/10">
-              <CalendarDays className="h-5 w-5 text-sky-400" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/15">
+              <CalendarDays className="h-5 w-5 text-sky-600" />
             </span>
             <div>
-              <p className="text-sm font-medium text-white">Próximo turno</p>
-              <p className="text-xs text-slate-500">{upcoming.serviceName || 'Sin servicio'}</p>
+              <p className="text-sm font-medium text-brand-text">Próximo turno</p>
+              <p className="text-xs text-brand-text-muted">{upcoming.serviceName || 'Sin servicio'}</p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl bg-white/[0.02] border border-white/[0.04] px-4 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl bg-brand-bg border border-brand-pastel px-4 py-3">
             <div className="flex items-center gap-3">
-              <Clock className="h-4 w-4 text-slate-500" />
+              <Clock className="h-4 w-4 text-brand-text-muted" />
               <div>
-                <p className="text-sm font-medium text-white">{upcoming.time}</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-sm font-medium text-brand-text">{upcoming.time}</p>
+                <p className="text-xs text-brand-text-muted">
                   {format(getAptDate(upcoming), "d 'de' MMM, yyyy", { locale: es })}
                 </p>
               </div>
@@ -123,7 +123,7 @@ function UserDashboardPage() {
 
           <button
             onClick={() => navigate(ROUTES.APPOINTMENTS)}
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-rose-400/80 hover:text-rose-300 transition-colors"
+            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-brand-primary hover:text-brand-primary-hover transition-colors"
           >
             Ver mis turnos
             <ArrowRight className="h-3.5 w-3.5" />
@@ -134,20 +134,20 @@ function UserDashboardPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 transition-all duration-300 hover:border-white/[0.1]"
+          className="rounded-2xl border border-brand-pastel bg-brand-card p-6 shadow-sm shadow-brand-text/5 transition-all duration-300 hover:border-brand-primary/50"
         >
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/[0.04]">
-              <AlertCircle className="h-6 w-6 text-slate-400" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-pastel/20">
+              <AlertCircle className="h-6 w-6 text-brand-text-muted" />
             </span>
             <div className="flex-1">
-              <p className="text-base font-semibold text-white">No tienes turnos programados</p>
-              <p className="mt-1 text-sm text-slate-400 leading-relaxed">
+              <p className="text-base font-semibold text-brand-text">No tienes turnos programados</p>
+              <p className="mt-1 text-sm text-brand-text-muted leading-relaxed">
                 Es un excelente momento para reservar tu próxima cita.
               </p>
               <button
                 onClick={() => navigate(ROUTES.APPOINTMENTS)}
-                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-500/90 to-violet-500/90 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:from-rose-600 hover:to-violet-600 active:scale-[0.97] transition-all duration-200"
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-primary-hover active:scale-[0.97] transition-all duration-200"
               >
                 Reservar ahora
                 <ArrowRight className="h-4 w-4" />

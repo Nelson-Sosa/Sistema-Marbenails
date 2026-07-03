@@ -110,8 +110,8 @@ function ServicesPage() {
             <Scissors className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Catálogo de Servicios</h1>
-            <p className="text-sm text-slate-400">Explorá nuestros servicios y reservá tu turno.</p>
+            <h1 className="text-2xl font-bold text-brand-text">Catálogo de Servicios</h1>
+            <p className="text-sm text-brand-text-muted">Explorá nuestros servicios y reservá tu turno.</p>
           </div>
         </div>
 
@@ -173,9 +173,9 @@ function ServicesPage() {
           )}
         </div>
       ) : (
-        <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-900/50">
-          <Scissors className="mb-3 h-10 w-10 text-slate-600" />
-          <p className="text-lg font-medium text-slate-300">No hay servicios disponibles</p>
+        <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-brand-pastel bg-brand-pastel/10">
+          <Scissors className="mb-3 h-10 w-10 text-brand-text-muted" />
+          <p className="text-lg font-medium text-brand-text-muted">No hay servicios disponibles</p>
         </div>
       )}
 

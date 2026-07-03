@@ -92,16 +92,16 @@ export default function ProfilePage() {
           <img
             src={userProfile.photoURL}
             alt={userProfile.displayName}
-            className="h-16 w-16 rounded-full border-2 border-slate-700 object-cover"
+            className="h-16 w-16 rounded-full border-2 border-brand-pastel object-cover"
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-800">
-            <UserCircle className="h-9 w-9 text-slate-400" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-pastel/30">
+            <UserCircle className="h-9 w-9 text-brand-text-muted" />
           </div>
         )}
         <div>
-          <h1 className="text-2xl font-bold text-white">Mi Perfil</h1>
-          <p className="mt-0.5 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-brand-text">Mi Perfil</h1>
+          <p className="mt-0.5 text-sm text-brand-text-muted">
             {isAdmin 
               ? 'Gestiona tu información de cuenta.'
               : 'Actualizá tus datos de contacto para recibir recordatorios de tus turnos por WhatsApp.'}
@@ -135,11 +135,11 @@ export default function ProfilePage() {
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-200">Correo electrónico</label>
-                <div className="flex h-10 items-center gap-2 rounded-lg border border-slate-800 bg-slate-800/50 px-3 opacity-70">
-                  <Mail className="h-4 w-4 text-slate-500" />
-                  <span className="text-sm text-slate-400">{user?.email}</span>
-                  <span className="ml-auto rounded px-1.5 py-0.5 text-xs font-medium bg-slate-700 text-slate-400">
+                <label className="text-sm font-medium text-brand-text-muted">Correo electrónico</label>
+                <div className="flex h-10 items-center gap-2 rounded-lg border border-brand-pastel bg-brand-bg px-3 opacity-70">
+                  <Mail className="h-4 w-4 text-brand-text-muted" />
+                  <span className="text-sm text-brand-text-muted">{user?.email}</span>
+                  <span className="ml-auto rounded px-1.5 py-0.5 text-xs font-medium bg-brand-pastel text-brand-text-muted">
                     No editable
                   </span>
                 </div>
@@ -166,15 +166,15 @@ export default function ProfilePage() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-slate-900 text-rose-500 focus:ring-rose-500 cursor-pointer"
+                    className="mt-0.5 h-4 w-4 rounded border-brand-pastel bg-brand-bg text-brand-primary focus:ring-brand-primary cursor-pointer"
                     {...register('whatsappOptIn')}
                     disabled={!phoneValue?.trim()}
                   />
                   <div>
-                    <p className="text-sm font-medium text-slate-200">
+                    <p className="text-sm font-medium text-brand-text-muted">
                       Deseo recibir recordatorios por WhatsApp
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-brand-text-muted">
                       Te avisaremos 24hs antes de tu turno. {!phoneValue?.trim() && '(Requiere número de teléfono)'}
                     </p>
                   </div>
@@ -203,22 +203,22 @@ export default function ProfilePage() {
           <Card>
             <Card.Header title="Información de la cuenta" />
             <Card.Body>
-              <div className="space-y-3 rounded-lg bg-slate-800/30 p-4">
-                <div className="flex justify-between border-b border-slate-800 pb-3">
-                  <span className="text-sm text-slate-400">Rol</span>
-                  <span className="text-sm font-medium text-slate-200">Administrador</span>
+              <div className="space-y-3 rounded-lg bg-brand-pastel/10 p-4">
+                <div className="flex justify-between border-b border-brand-pastel pb-3">
+                  <span className="text-sm text-brand-text-muted">Rol</span>
+                  <span className="text-sm font-medium text-brand-text-muted">Administrador</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-800 pb-3">
-                  <span className="text-sm text-slate-400">Fecha de registro</span>
-                  <span className="text-sm font-medium text-slate-200">
+                <div className="flex justify-between border-b border-brand-pastel pb-3">
+                  <span className="text-sm text-brand-text-muted">Fecha de registro</span>
+                  <span className="text-sm font-medium text-brand-text-muted">
                     {userProfile?.createdAt?.seconds 
                       ? format(new Date(userProfile.createdAt.seconds * 1000), "d 'de' MMMM, yyyy", { locale: es })
                       : 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center gap-2">
-                  <span className="text-sm text-slate-400 shrink-0">UID</span>
-                  <span className="text-xs font-mono text-slate-500 truncate max-w-[160px] sm:max-w-[280px]" title={user?.uid}>{user?.uid}</span>
+                  <span className="text-sm text-brand-text-muted shrink-0">UID</span>
+                  <span className="text-xs font-mono text-brand-text-muted truncate max-w-[160px] sm:max-w-[280px]" title={user?.uid}>{user?.uid}</span>
                 </div>
               </div>
             </Card.Body>
@@ -229,8 +229,8 @@ export default function ProfilePage() {
             <Card.Body>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-slate-200">Contraseña</h3>
-                  <p className="text-xs text-slate-500">Te enviaremos un correo para cambiar tu contraseña.</p>
+                  <h3 className="text-sm font-medium text-brand-text-muted">Contraseña</h3>
+                  <p className="text-xs text-brand-text-muted">Te enviaremos un correo para cambiar tu contraseña.</p>
                 </div>
                 <Button variant="secondary" size="sm" onClick={handlePasswordReset} leftIcon={<Key className="h-4 w-4" />} className="self-start sm:self-auto">
                   Cambiar contraseña

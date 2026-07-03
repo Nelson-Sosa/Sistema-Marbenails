@@ -59,7 +59,7 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
     : 0
 
   return (
-    <div className="group rounded-3xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-white/[0.01] shadow-lg shadow-black/[0.08] transition-all duration-300 hover:border-white/[0.1] hover:shadow-xl hover:shadow-black/[0.12]">
+    <div className="group rounded-3xl border border-brand-pastel bg-brand-card shadow-lg shadow-brand-text/5 transition-all duration-300 hover:border-brand-primary/50 hover:shadow-xl hover:shadow-brand-text/10">
       {/* ── Category Header ── */}
       <div
         role="button"
@@ -70,19 +70,19 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
       >
         {/* LEFT: Icon + Name */}
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          <span className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-violet-500/10 ring-1 ring-white/[0.08] shadow-md shadow-rose-500/10">
+          <span className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-violet-500/10 ring-1 ring-brand-pastel shadow-md shadow-rose-500/10">
             <Icon className="h-6 w-6 text-rose-400" />
           </span>
           <div className="min-w-0">
-            <h3 className="text-xl font-semibold tracking-tight text-white">{category.name}</h3>
+            <h3 className="text-xl font-semibold tracking-tight text-brand-text">{category.name}</h3>
             {category.description && (
-              <p className="mt-0.5 text-sm text-slate-500 line-clamp-1">{category.description}</p>
+              <p className="mt-0.5 text-sm text-brand-text-muted line-clamp-1">{category.description}</p>
             )}
           </div>
         </div>
 
         {/* CENTER: Stats (desktop only) */}
-        <div className="hidden xl:flex items-center gap-6 text-xs text-slate-500">
+        <div className="hidden xl:flex items-center gap-6 text-xs text-brand-text-muted">
           {minPrice > 0 && (
             <span className="whitespace-nowrap">Desde {formatCurrency(minPrice)}</span>
           )}
@@ -104,7 +104,7 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); onEditCategory(category) }}
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 transition-all duration-200 hover:bg-white/[0.06] hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-text-muted transition-all duration-200 hover:bg-brand-pastel hover:text-brand-primary"
                 title="Editar categoría"
               >
                 <Edit2 className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
             animate={{ rotate: isOpen ? 0 : -90 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <ChevronDown className="h-4 w-4 text-slate-500" />
+            <ChevronDown className="h-4 w-4 text-brand-text-muted" />
           </motion.div>
         </div>
       </div>
@@ -138,10 +138,10 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className="mx-6 border-t border-white/[0.04]" />
+            <div className="mx-6 border-t border-brand-pastel" />
 
             {activeServices.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-500">
+              <div className="px-6 py-10 text-center text-sm text-brand-text-muted">
                 No hay servicios en esta categoría.
               </div>
             ) : (
@@ -166,27 +166,27 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
                       >
                         {/* Name + badges */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-base font-semibold text-white">{svc.name}</p>
+                          <p className="text-base font-semibold text-brand-text">{svc.name}</p>
                           {svc.description && (
-                            <p className="mt-1 text-sm text-slate-500 line-clamp-1">{svc.description}</p>
+                            <p className="mt-1 text-sm text-brand-text-muted line-clamp-1">{svc.description}</p>
                           )}
                           {/* Duration (Mobile) */}
-                          <div className="flex sm:hidden items-center gap-1.5 mt-2 text-xs text-slate-400">
+                          <div className="flex sm:hidden items-center gap-1.5 mt-2 text-xs text-brand-text-muted">
                             <Clock className="h-3.5 w-3.5" />
                             <span>{svc.duration} min</span>
                           </div>
                         </div>
 
                         {/* Duration badge (Desktop) */}
-                        <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 text-xs text-slate-400 shrink-0">
+                        <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-brand-pastel bg-brand-pastel/20 px-2.5 py-1 text-xs text-brand-text-muted shrink-0">
                           <Clock className="h-3.5 w-3.5" />
                           <span>{svc.duration} min</span>
                         </div>
 
                         {/* Price + Action Row */}
-                        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-white/[0.04] sm:border-0">
+                        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-brand-pastel sm:border-0">
                           {/* Price */}
-                          <p className="text-sm sm:text-base font-bold text-emerald-400 whitespace-nowrap drop-shadow-sm">
+                          <p className="text-sm sm:text-base font-bold text-brand-success whitespace-nowrap drop-shadow-sm">
                             {formatCurrency(svc.price)}
                           </p>
 
@@ -198,7 +198,7 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
                               </Badge>
                               <button
                                 onClick={(e) => { e.stopPropagation(); onEditService(svc) }}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-all duration-200 hover:bg-white/[0.06] hover:text-white"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl text-brand-text-muted transition-all duration-200 hover:bg-brand-pastel hover:text-brand-primary"
                               >
                                 <Edit2 className="h-4 w-4" />
                               </button>
