@@ -46,12 +46,12 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative max-h-[90vh] w-full max-w-2xl lg:max-w-4xl overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 lg:p-8 shadow-2xl">
+      <div className="relative max-h-[90vh] w-full max-w-2xl lg:max-w-4xl overflow-y-auto rounded-2xl border border-brand-pastel bg-brand-card p-4 sm:p-6 lg:p-8 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+          className="absolute right-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel hover:text-brand-primary"
         >
           <X className="h-5 w-5" />
         </button>
@@ -64,54 +64,54 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
           <div className="flex flex-col gap-6">
             {/* ── Client Header ──────────────────────────────────────────── */}
             <div>
-              <h2 className="text-xl font-bold text-white">{client.name}</h2>
-              <p className="mt-0.5 text-sm text-slate-400">
+              <h2 className="text-xl font-bold text-brand-text">{client.name}</h2>
+              <p className="mt-0.5 text-sm text-brand-text-muted">
                 {formatPhoneDisplayPY(client.phone || client.whatsapp) || 'Sin teléfono'}
               </p>
             </div>
 
             {/* ── Metrics Cards ──────────────────────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-5">
-                <CalendarDays className="h-6 w-6 text-rose-400" />
-                <span className="text-3xl font-bold text-white">{metrics.totalVisits}</span>
-                <span className="text-xs text-slate-500">Visitas</span>
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-brand-pastel bg-brand-pastel/10 px-4 py-5">
+                <CalendarDays className="h-6 w-6 text-brand-primary" />
+                <span className="text-3xl font-bold text-brand-text">{metrics.totalVisits}</span>
+                <span className="text-xs text-brand-text-muted">Visitas</span>
               </div>
 
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-5">
-                <Clock className="h-6 w-6 text-sky-400" />
-                <span className="text-center text-base font-bold text-white">
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-brand-pastel bg-brand-pastel/10 px-4 py-5">
+                <Clock className="h-6 w-6 text-sky-600" />
+                <span className="text-center text-base font-bold text-brand-text">
                   {metrics.lastVisit
                     ? format(metrics.lastVisit, 'dd/MM/yy', { locale: es })
                     : '—'}
                 </span>
-                <span className="text-xs text-slate-500">Última visita</span>
+                <span className="text-xs text-brand-text-muted">Última visita</span>
               </div>
 
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-5">
-                <DollarSign className="h-6 w-6 text-emerald-400" />
-                <span className="text-base font-bold text-emerald-400">
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-brand-pastel bg-brand-pastel/10 px-4 py-5">
+                <DollarSign className="h-6 w-6 text-brand-success" />
+                <span className="text-base font-bold text-brand-success">
                   {metrics.totalSpent > 0 ? formatCurrency(metrics.totalSpent) : '—'}
                 </span>
-                <span className="text-xs text-slate-500">Total gastado</span>
+                <span className="text-xs text-brand-text-muted">Total gastado</span>
               </div>
             </div>
 
             {/* ── Benefits Program ──────────────────────────────────────────── */}
             {benefitsSettings?.enabled && (
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 sm:p-5 space-y-4">
+              <div className="rounded-xl border border-brand-pastel bg-brand-pastel/20 p-4 sm:p-5 space-y-4">
                 <div className="flex items-center gap-2.5">
-                  <Gift className="h-5 w-5 text-rose-400" />
-                  <h3 className="text-base font-semibold text-white">Programa de Beneficios</h3>
+                  <Gift className="h-5 w-5 text-brand-primary" />
+                  <h3 className="text-base font-semibold text-brand-text">Programa de Beneficios</h3>
                 </div>
 
                 {(client.freeServices ?? 0) > 0 ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
-                      <Sparkles className="h-4 w-4 text-amber-400" />
-                      <span className="text-amber-400 font-medium">Servicio gratuito disponible</span>
+                      <Sparkles className="h-4 w-4 text-amber-600" />
+                      <span className="text-amber-600 font-medium">Servicio gratuito disponible</span>
                     </div>
-                    <p className="text-sm text-slate-300">
+                    <p className="text-sm text-brand-text-muted">
                       {client.freeServices} servicio{(client.freeServices ?? 0) > 1 ? 's' : ''} gratuito{(client.freeServices ?? 0) > 1 ? 's' : ''} para canjear.
                     </p>
                     <Button
@@ -126,13 +126,13 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm text-slate-400">
+                    <div className="flex items-center justify-between text-sm text-brand-text-muted">
                       <span>{client.totalVisits ?? 0} de {client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10} visitas</span>
-                      <span className="font-medium text-rose-300">{Math.max((client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10) - (client.totalVisits ?? 0), 0)} restantes</span>
+                      <span className="font-medium text-brand-primary">{Math.max((client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10) - (client.totalVisits ?? 0), 0)} restantes</span>
                     </div>
-                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-brand-pastel/50">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-rose-500/70 to-violet-500/70 transition-all duration-500"
+                        className="h-full rounded-full bg-brand-primary transition-all duration-500"
                         style={{
                           width: `${Math.min(
                             ((client.totalVisits ?? 0) / (client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10)) * 100,
@@ -141,7 +141,7 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
                         }}
                       />
                     </div>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-brand-text-muted">
                       {client.totalVisits >= (client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10)
                         ? '¡Listo para recompensa!'
                         : `Faltan ${Math.max((client.nextRewardAt ?? benefitsSettings.rewardEveryVisits ?? 10) - (client.totalVisits ?? 0), 0)} visita${Math.max((client.nextRewardAt ?? 10) - (client.totalVisits ?? 0), 0) !== 1 ? 's' : ''} para obtener un servicio gratuito.`
@@ -154,7 +154,7 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
 
             {/* ── Service History ────────────────────────────────────────── */}
             <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-text-muted">
                 Historial de Servicios
               </h3>
 
@@ -167,25 +167,25 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
                       <div
                         key={apt.id}
                         className={cn(
-                          'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-800/50 px-4 py-3.5 transition-colors hover:bg-slate-800/30',
-                          isActive ? 'border-l-emerald-500/40' : 'border-l-slate-700 opacity-60'
+                          'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-brand-pastel px-4 py-3.5 transition-colors hover:bg-brand-pastel/30',
+                          isActive ? 'border-l-brand-success' : 'border-l-brand-pastel'
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className={cn(
                             'flex h-8 w-8 items-center justify-center rounded-lg shrink-0',
-                            isActive ? 'bg-emerald-500/10' : 'bg-slate-800'
+                            isActive ? 'bg-brand-success/10' : 'bg-brand-pastel/30'
                           )}>
                             <Scissors className={cn(
                               'h-4 w-4',
-                              isActive ? 'text-emerald-400' : 'text-slate-500'
+                              isActive ? 'text-brand-success' : 'text-brand-text-muted'
                             )} />
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-white truncate">
+                            <p className="text-sm font-medium text-brand-text truncate">
                               {apt.serviceName || 'Servicio'}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-brand-text-muted">
                               {format(aptDate, "d 'de' MMM, yyyy", { locale: es })}
                             </p>
                           </div>
@@ -193,7 +193,7 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
 
                         <div className="flex items-center gap-3 shrink-0">
                           {apt.price != null && (
-                            <span className="text-sm font-semibold text-emerald-400">
+                            <span className="text-sm font-semibold text-brand-success">
                               {formatCurrency(apt.price)}
                             </span>
                           )}
@@ -206,9 +206,9 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
                   })}
                 </div>
               ) : (
-                <div className="flex h-32 flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-950/30">
-                  <Scissors className="mb-2 h-6 w-6 text-slate-600" />
-                  <p className="text-sm text-slate-500">No tiene turnos registrados</p>
+                <div className="flex h-32 flex-col items-center justify-center rounded-xl border border-dashed border-brand-pastel bg-brand-pastel/10">
+                  <Scissors className="mb-2 h-6 w-6 text-brand-text-muted" />
+                  <p className="text-sm text-brand-text-muted">No tiene turnos registrados</p>
                 </div>
               )}
             </div>

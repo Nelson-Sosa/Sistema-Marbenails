@@ -70,17 +70,17 @@ function ClientModal({ isOpen, onClose, client }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 shadow-2xl">
+      <div className="relative w-full max-w-md rounded-2xl border border-brand-pastel bg-brand-card p-4 sm:p-6 shadow-2xl">
         <button 
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+          className="absolute right-4 top-4 rounded-lg p-1 text-brand-text-muted hover:bg-brand-pastel hover:text-brand-primary"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-xl font-bold text-white">
+        <h2 className="text-xl font-bold text-brand-text">
           {client ? 'Editar Cliente' : 'Nuevo Cliente'}
         </h2>
         
@@ -108,44 +108,44 @@ function ClientModal({ isOpen, onClose, client }) {
           </div>
 
           {/* ── WhatsApp/Contact admin controls ─────────────────────────────── */}
-          <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-4 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Estado WhatsApp</p>
+          <div className="rounded-lg border border-brand-pastel bg-brand-bg p-4 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted">Estado WhatsApp</p>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-rose-500 focus:ring-rose-500"
+                className="h-4 w-4 rounded border-brand-pastel bg-white text-brand-primary focus:ring-brand-primary"
                 {...register('whatsappOptIn')}
                 disabled={!phoneValue?.trim()}
               />
-              <span className="text-sm text-slate-300">Desea recibir recordatorios por WhatsApp</span>
+              <span className="text-sm text-brand-text-muted">Desea recibir recordatorios por WhatsApp</span>
             </label>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+                className="h-4 w-4 rounded border-brand-pastel bg-white text-brand-success focus:ring-brand-success"
                 {...register('phoneVerified')}
                 disabled={!phoneValue?.trim()}
               />
-              <span className="text-sm text-slate-300">☑ Número verificado</span>
+              <span className="text-sm text-brand-text-muted">☑ Número verificado</span>
             </label>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-sky-500 focus:ring-sky-500"
+                className="h-4 w-4 rounded border-brand-pastel bg-white text-sky-500 focus:ring-sky-500"
                 {...register('remindersEnabled')}
                 disabled={!phoneValue?.trim()}
               />
-              <span className="text-sm text-slate-300">Recordatorios activos</span>
+              <span className="text-sm text-brand-text-muted">Recordatorios activos</span>
             </label>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-200">Notas (opcional)</label>
+            <label className="text-sm font-medium text-brand-text-muted">Notas (opcional)</label>
             <textarea
-              className="min-h-[80px] w-full rounded-lg border border-slate-800 bg-slate-950 p-3 text-sm text-white placeholder-slate-500 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="min-h-[80px] w-full rounded-lg border border-brand-pastel bg-brand-bg p-3 text-sm text-brand-text placeholder-brand-text-muted focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
               placeholder="Preferencias, alergias..."
               {...register('notes')}
             />
