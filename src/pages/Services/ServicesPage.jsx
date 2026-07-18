@@ -13,6 +13,7 @@ import Spinner from '@/components/ui/Spinner'
 import CategoryCard from './components/CategoryCard'
 import ServiceModal from './components/ServiceModal'
 import CategoryModal from './components/CategoryModal'
+import LocationSection from '@/components/common/LocationSection'
 
 function ServicesPage() {
   usePageTitle('Servicios')
@@ -178,6 +179,9 @@ function ServicesPage() {
           <p className="text-lg font-medium text-brand-text-muted">No hay servicios disponibles</p>
         </div>
       )}
+
+      {/* ── Location Section ────────────────────────────────────────────────── */}
+      <LocationSection />
 
       {/* ── Service Modal ─────────────────────────────────────────────────── */}
       {(serviceModalOpen || selectedService) && (
