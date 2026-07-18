@@ -57,7 +57,7 @@ export default function LocationSection() {
         {/* Lado derecho: Mapa interactivo (iframe) */}
         <div className="min-h-[350px] w-full bg-brand-pastel/20 lg:min-h-full">
           <iframe 
-            src="https://maps.google.com/maps?q=-27.3105,-55.8740&hl=es&z=16&output=embed" 
+            src="https://maps.google.com/maps?q=-27.3031606,-55.8750885&hl=es&z=16&output=embed" 
             width="100%" 
             height="100%" 
             style={{ border: 0 }} 
