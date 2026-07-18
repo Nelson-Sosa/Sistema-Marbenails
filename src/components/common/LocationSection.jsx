@@ -2,8 +2,8 @@ import { MapPin, Clock, ExternalLink } from 'lucide-react'
 
 export default function LocationSection() {
   // Datos de ejemplo - Se pueden modificar más adelante con la ubicación real
-  const address = "Av. Principal 1234, Centro (Ejemplo)"
-  const mapsLink = "https://maps.google.com/?q=Marbenails"
+  const address = "Casa Familia Ocampos, Encarnación"
+  const mapsLink = "https://maps.app.goo.gl/Nynpmjmm9N7XtNX28"
 
   return (
     <section className="mt-12 overflow-hidden rounded-2xl border border-brand-pastel bg-brand-card shadow-sm">
@@ -35,8 +35,8 @@ export default function LocationSection() {
               </div>
               <div>
                 <h3 className="font-medium text-brand-text">Horarios de Atención</h3>
-                <p className="mt-1 text-sm text-brand-text-muted">Lunes a Viernes: 09:00 - 20:00</p>
-                <p className="text-sm text-brand-text-muted">Sábados: 10:00 - 18:00</p>
+                <p className="mt-1 text-sm text-brand-text-muted">Lunes a Viernes: 07:00 - 18:00 hs</p>
+                <p className="text-sm text-brand-text-muted">Sábados y Domingos: 07:00 - 19:00 hs</p>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@ export default function LocationSection() {
         <div className="min-h-[350px] w-full bg-brand-pastel/20 lg:min-h-full">
           {/* Iframe de ejemplo apuntando a un lugar genérico (Obelisco, Buenos Aires) - Reemplazar el src con el código de Google Maps real */}
           <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13136.06685002271!2d-58.3815704!3d-34.6037389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccacbc4d7f551%3A0x334467c699966a33!2sObelisco!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" 
+            src="https://maps.google.com/maps?q=-27.302982,-55.874995&hl=es&z=15&output=embed" 
             width="100%" 
             height="100%" 
             style={{ border: 0 }} 
