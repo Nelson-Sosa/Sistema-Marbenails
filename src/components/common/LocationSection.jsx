@@ -3,7 +3,7 @@ import { MapPin, Clock, ExternalLink } from 'lucide-react'
 export default function LocationSection() {
   // Datos de ejemplo - Se pueden modificar más adelante con la ubicación real
   const address = "Zona Centro Educativo Integrity, Encarnación"
-  const mapsLink = "https://maps.app.goo.gl/gEvFB8qgs38yHdMg8"
+  const mapsLink = "https://maps.app.goo.gl/ggh42CVJ1QJGGnHZ9"
 
   return (
     <section className="mt-12 overflow-hidden rounded-2xl border border-brand-pastel bg-brand-card shadow-sm">
