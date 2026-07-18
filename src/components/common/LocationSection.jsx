@@ -2,8 +2,8 @@ import { MapPin, Clock, ExternalLink } from 'lucide-react'
 
 export default function LocationSection() {
   // Datos de ejemplo - Se pueden modificar más adelante con la ubicación real
-  const address = "Casa Familia Ocampos, Encarnación"
-  const mapsLink = "https://maps.app.goo.gl/Nynpmjmm9N7XtNX28"
+  const address = "Zona Centro Educativo Integrity, Encarnación"
+  const mapsLink = "https://maps.app.goo.gl/gEvFB8qgs38yHdMg8"
 
   return (
     <section className="mt-12 overflow-hidden rounded-2xl border border-brand-pastel bg-brand-card shadow-sm">
@@ -58,7 +58,7 @@ export default function LocationSection() {
         <div className="min-h-[350px] w-full bg-brand-pastel/20 lg:min-h-full">
           {/* Iframe de ejemplo apuntando a un lugar genérico (Obelisco, Buenos Aires) - Reemplazar el src con el código de Google Maps real */}
           <iframe 
-            src="https://maps.google.com/maps?q=-27.302982,-55.874995&hl=es&z=15&output=embed" 
+            src="https://maps.google.com/maps?q=-27.3030605,-55.8751335&hl=es&z=16&output=embed" 
             width="100%" 
             height="100%" 
             style={{ border: 0 }} 
