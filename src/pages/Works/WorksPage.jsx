@@ -90,8 +90,8 @@ export default function WorksPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center flex-wrap">
-        <div className="relative flex-1">
+      <div className="flex flex-col lg:flex-row gap-3">
+        <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-text-muted" />
           <input
             type="text"
@@ -102,38 +102,40 @@ export default function WorksPage() {
           />
         </div>
 
-        <select
-          value={filterService}
-          onChange={(e) => setFilterService(e.target.value)}
-          className="h-10 w-full sm:w-auto flex-1 max-w-xs rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
-        >
-          <option value="">Todos los servicios</option>
-          {services?.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 w-full lg:w-auto">
+          <select
+            value={filterService}
+            onChange={(e) => setFilterService(e.target.value)}
+            className="h-10 w-full rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+          >
+            <option value="">Todos los servicios</option>
+            {services?.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
 
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="h-10 w-full sm:w-auto rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
-        >
-          <option value="">Todos los tipos</option>
-          <option value="client">Clientas</option>
-          <option value="portfolio">Diseños libres</option>
-        </select>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="h-10 w-full rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+          >
+            <option value="">Todos los tipos</option>
+            <option value="client">Clientas</option>
+            <option value="portfolio">Libres</option>
+          </select>
 
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="h-10 w-full sm:w-auto rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
-        >
-          <option value="">Todos los estados</option>
-          <option value="published">Publicados</option>
-          <option value="private">Ocultos</option>
-        </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="col-span-2 md:col-span-1 h-10 w-full rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+          >
+            <option value="">Todos los estados</option>
+            <option value="published">Publicados</option>
+            <option value="private">Ocultos</option>
+          </select>
+        </div>
       </div>
 
       {/* Table / Empty State */}
