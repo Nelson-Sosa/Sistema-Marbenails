@@ -53,19 +53,19 @@ function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row bg-slate-950">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-brand-bg">
       {/* ── Branding Panel ──────────────────────────────────── */}
       <div className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12 lg:w-1/2 lg:py-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-600/20 via-pink-600/10 to-slate-950" />
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-rose-500/10 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-pink-500/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/5 blur-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-pastel via-brand-pastel/30 to-brand-bg" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-brand-primary/20 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-brand-secondary/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-primary/10 blur-2xl" />
 
         <div
           className="relative z-10 flex flex-col items-center justify-center gap-3 transition-transform duration-300 hover:scale-[1.02] md:gap-4"
           style={{ animation: 'fade-in-scale 400ms ease-out forwards' }}
         >
-          <div className="relative flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem] bg-white shadow-[0_8px_32px_rgba(225,29,72,0.2)] md:rounded-[2rem] 
+          <div className="relative flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem] bg-white shadow-xl md:rounded-[2rem] 
                           w-[90px] h-[90px] 
                           sm:w-[100px] sm:h-[100px] 
                           md:w-[120px] md:h-[120px] 
@@ -77,7 +77,7 @@ function RegisterPage() {
               className="h-full w-full max-w-none object-contain scale-[1.35] transition-transform duration-500"
             />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+          <h1 className="text-2xl font-bold tracking-tight text-brand-text md:text-3xl lg:text-4xl">
             {APP_NAME}
           </h1>
         </div>
@@ -87,8 +87,8 @@ function RegisterPage() {
       <div className="flex w-full flex-col items-center justify-center px-6 pb-12 pt-4 lg:w-1/2 lg:px-12 lg:py-0">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white">Crear cuenta</h2>
-            <p className="mt-1.5 text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-brand-text">Crear cuenta</h2>
+            <p className="mt-1.5 text-sm font-medium text-brand-text-muted">
               Completá tus datos para registrarte
             </p>
           </div>
@@ -132,7 +132,7 @@ function RegisterPage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  className="text-slate-400 hover:text-white"
+                  className="text-brand-text-muted hover:text-brand-primary"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -157,7 +157,7 @@ function RegisterPage() {
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  className="text-slate-400 hover:text-white"
+                  className="text-brand-text-muted hover:text-brand-primary"
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -182,11 +182,11 @@ function RegisterPage() {
           </form>
 
           {/* Footer link to login */}
-          <p className="mt-8 text-center text-sm text-slate-400">
+          <p className="mt-8 text-center text-sm font-medium text-brand-text-muted">
             ¿Ya tenés cuenta?{' '}
             <Link
               to={ROUTES.LOGIN}
-              className="text-rose-400 hover:text-rose-300 hover:underline"
+              className="text-brand-primary hover:text-brand-primary-hover hover:underline"
             >
               Iniciar sesión
             </Link>

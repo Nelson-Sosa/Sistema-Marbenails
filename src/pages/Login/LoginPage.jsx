@@ -109,16 +109,16 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row bg-slate-950">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-brand-bg">
       {/* ── Branding Panel (Top on mobile, Left on desktop) ─────────────────────────── */}
       <div className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12 lg:w-1/2 lg:py-0">
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-600/20 via-pink-600/10 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-pastel via-brand-pastel/30 to-brand-bg" />
 
         {/* Decorative circles */}
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-rose-500/10 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-pink-500/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/5 blur-2xl" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-brand-primary/20 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-brand-secondary/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-primary/10 blur-2xl" />
 
         {/* Content - Branding Block */}
         <div 
@@ -126,7 +126,7 @@ function LoginPage() {
           style={{ animation: 'fade-in-scale 400ms ease-out forwards' }}
         >
           {/* Logo App-Icon Container */}
-          <div className="relative flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem] bg-white shadow-[0_8px_32px_rgba(225,29,72,0.2)] md:rounded-[2rem] 
+          <div className="relative flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-[1.5rem] bg-white shadow-xl md:rounded-[2rem] 
                           w-[90px] h-[90px] 
                           sm:w-[100px] sm:h-[100px] 
                           md:w-[120px] md:h-[120px] 
@@ -140,7 +140,7 @@ function LoginPage() {
             />
           </div>
           {/* Brand Name */}
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+          <h1 className="text-2xl font-bold tracking-tight text-brand-text md:text-3xl lg:text-4xl">
             {APP_NAME}
           </h1>
         </div>
@@ -151,8 +151,8 @@ function LoginPage() {
         <div className="w-full max-w-sm">
           {/* Form header */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white">Iniciar sesión</h2>
-            <p className="mt-1.5 text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-brand-text">Iniciar sesión</h2>
+            <p className="mt-1.5 text-sm font-medium text-brand-text-muted">
               Ingresá tus credenciales para acceder al sistema
             </p>
           </div>
@@ -186,7 +186,7 @@ function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  className="text-slate-400 hover:text-white"
+                  className="text-brand-text-muted hover:text-brand-primary"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -203,7 +203,7 @@ function LoginPage() {
             <div className="flex justify-end">
               <Link
                 to="/forgot-password"
-                className="text-xs text-rose-400 hover:text-rose-300 hover:underline"
+                className="text-xs font-medium text-brand-primary hover:text-brand-primary-hover hover:underline"
               >
                 ¿Olvidaste tu contraseña?
               </Link>
@@ -222,9 +222,9 @@ function LoginPage() {
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-800" />
-            <span className="text-xs text-slate-500">o continuá con</span>
-            <div className="h-px flex-1 bg-slate-800" />
+            <div className="h-px flex-1 bg-brand-pastel" />
+            <span className="text-xs font-medium text-brand-text-muted">o continuá con</span>
+            <div className="h-px flex-1 bg-brand-pastel" />
           </div>
 
           {/* Google login */}
@@ -265,18 +265,18 @@ function LoginPage() {
           </Button>
 
           {/* Link to register */}
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="mt-6 text-center text-sm font-medium text-brand-text-muted">
             ¿No tenés cuenta?{' '}
             <Link
               to={ROUTES.REGISTER}
-              className="text-rose-400 hover:text-rose-300 hover:underline"
+              className="text-brand-primary hover:text-brand-primary-hover hover:underline"
             >
               Registrate
             </Link>
           </p>
 
           {/* Footer */}
-          <p className="mt-8 text-center text-xs text-slate-600">
+          <p className="mt-8 text-center text-xs font-medium text-brand-text-muted/60">
             {APP_NAME} © {new Date().getFullYear()}. Sistema de gestión privado.
           </p>
         </div>
