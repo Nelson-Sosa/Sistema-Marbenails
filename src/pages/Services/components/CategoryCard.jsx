@@ -66,17 +66,23 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
         tabIndex={0}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsOpen(!isOpen) } }}
-        className="flex w-full items-center gap-4 px-6 py-6 text-left cursor-pointer select-none"
+        className="flex w-full items-center gap-3 sm:gap-4 px-4 sm:px-6 py-5 sm:py-6 text-left cursor-pointer select-none"
       >
         {/* LEFT: Icon + Name */}
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <span className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-violet-500/10 ring-1 ring-brand-pastel shadow-md shadow-rose-500/10">
-            <Icon className="h-6 w-6 text-rose-400" />
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          <span className="relative flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-violet-500/10 ring-1 ring-brand-pastel shadow-md shadow-rose-500/10">
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-rose-400" />
           </span>
-          <div className="min-w-0">
-            <h3 className="text-xl font-semibold tracking-tight text-brand-text">{category.name}</h3>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-brand-text truncate">{category.name}</h3>
+              {/* Mobile badge indicator */}
+              <span className="inline-flex sm:hidden items-center justify-center rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-bold text-rose-400 shrink-0">
+                {activeServices.length}
+              </span>
+            </div>
             {category.description && (
-              <p className="mt-0.5 text-sm text-brand-text-muted line-clamp-1">{category.description}</p>
+              <p className="mt-0.5 text-xs sm:text-sm text-brand-text-muted line-clamp-1">{category.description}</p>
             )}
           </div>
         </div>
@@ -94,9 +100,10 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
           )}
         </div>
 
-        {/* RIGHT: Badge + Chevron */}
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/8 px-3 py-1 text-xs font-medium text-rose-300">
+        {/* RIGHT: Badge + Actions + Chevron */}
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Desktop badge */}
+          <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/8 px-3 py-1 text-xs font-medium text-rose-300">
             {activeServices.length} servicio{activeServices.length !== 1 ? 's' : ''}
           </span>
 
@@ -104,17 +111,17 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); onEditCategory(category) }}
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-brand-text-muted transition-all duration-200 hover:bg-brand-pastel hover:text-brand-primary"
+                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-brand-text-muted transition-all duration-200 hover:bg-brand-pastel hover:text-brand-primary shrink-0"
                 title="Editar categoría"
               >
-                <Edit2 className="h-3.5 w-3.5" />
+                <Edit2 className="h-4 w-4" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onAddService(category) }}
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-rose-400 transition-all duration-200 hover:bg-rose-500/15"
+                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-rose-400 transition-all duration-200 hover:bg-rose-500/15 shrink-0"
                 title="Agregar servicio"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-4 w-4" />
               </button>
             </>
           )}
@@ -122,8 +129,9 @@ function CategoryCard({ category, services, isAdmin, onEditCategory, onAddServic
           <motion.div
             animate={{ rotate: isOpen ? 0 : -90 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="ml-1 sm:ml-0 shrink-0"
           >
-            <ChevronDown className="h-4 w-4 text-brand-text-muted" />
+            <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-brand-text-muted" />
           </motion.div>
         </div>
       </div>

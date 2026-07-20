@@ -1,6 +1,7 @@
 /**
  * WorksTable — Data grid for works in the admin panel.
  * Displays a list of works with their thumbnail, title, service, date, status and actions.
+ * Responsive: Cards on mobile, Table on desktop.
  */
 
 import { useState } from 'react'
@@ -46,16 +47,113 @@ export default function WorksTable({ works, onEdit, onView }) {
 
   if (!works?.length) return null
 
+  const ActionButtons = ({ work, isToggling }) => (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => onView(work)}
+        title="Ver fotos"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
+      >
+        <Eye className="h-4 w-4" />
+      </button>
+
+      <button
+        onClick={() => onEdit(work)}
+        title="Editar"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
+      >
+        <Pencil className="h-4 w-4" />
+      </button>
+
+      <button
+        onClick={() => handleTogglePublish(work)}
+        title={work.published ? 'Ocultar' : 'Publicar'}
+        disabled={isToggling}
+        className={cn(
+          'flex h-9 w-9 items-center justify-center rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+          work.published
+            ? 'text-amber-500 hover:bg-amber-50 hover:text-amber-600'
+            : 'text-brand-text-muted hover:bg-green-50 hover:text-green-600'
+        )}
+      >
+        {work.published ? <EyeOff className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
+      </button>
+
+      <button
+        onClick={() => setDeletingId(work.id)}
+        title="Eliminar"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-red-50 hover:text-red-500"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+    </div>
+  )
+
   return (
     <>
-      <div className="overflow-x-auto rounded-xl border border-brand-pastel bg-brand-card">
+      {/* ── MOBILE VIEW (Cards) ── */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {works.map((work) => {
+          const mainPhoto = work.photos?.[0]
+          const isToggling = togglingId === work.id
+
+          return (
+            <div key={work.id} className="rounded-xl border border-brand-pastel bg-brand-card p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-brand-pastel/20 border border-brand-border">
+                  {mainPhoto ? (
+                    <img
+                      src={getThumbnailUrl(mainPhoto.publicId) || mainPhoto.secureUrl}
+                      alt={work.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <ImageIcon className="h-6 w-6 text-brand-text-muted" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-base font-semibold text-brand-text" title={work.title}>
+                    {work.title}
+                  </p>
+                  <p className="truncate text-sm text-brand-text-muted">
+                    {work.serviceName}
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Badge variant={work.published ? 'success' : 'default'} size="sm">
+                      {work.published ? 'Publicado' : 'Oculto'}
+                    </Badge>
+                    {(!work.type || work.type === 'client') ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                        👤 Clienta
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                        ⭐ Libre
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-end border-t border-brand-pastel pt-2">
+                <ActionButtons work={work} isToggling={isToggling} />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ── DESKTOP VIEW (Table) ── */}
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-brand-pastel bg-brand-card shadow-sm">
         <table className="w-full text-left text-sm text-brand-text">
           <thead className="border-b border-brand-pastel bg-brand-pastel/10 text-xs font-semibold uppercase tracking-wider text-brand-text-muted">
             <tr>
               <th className="px-4 py-3">Trabajo</th>
-              <th className="px-4 py-3 hidden sm:table-cell">Servicio</th>
-              <th className="px-4 py-3 hidden md:table-cell">Tipo</th>
-              <th className="px-4 py-3 hidden lg:table-cell">Fecha</th>
+              <th className="px-4 py-3">Servicio</th>
+              <th className="px-4 py-3">Tipo</th>
+              <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3 text-center">Estado</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -68,7 +166,6 @@ export default function WorksTable({ works, onEdit, onView }) {
 
               return (
                 <tr key={work.id} className="transition-colors hover:bg-brand-pastel/5">
-                  {/* Photo & Title */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-brand-pastel/20 border border-brand-border">
@@ -89,20 +186,15 @@ export default function WorksTable({ works, onEdit, onView }) {
                         <p className="truncate font-medium text-brand-text" title={work.title}>
                           {work.title}
                         </p>
-                        <p className="truncate text-xs text-brand-text-muted sm:hidden">
-                          {work.serviceName}
-                        </p>
                       </div>
                     </div>
                   </td>
 
-                  {/* Service */}
-                  <td className="px-4 py-3 hidden sm:table-cell">
+                  <td className="px-4 py-3">
                     <span className="text-brand-text-muted">{work.serviceName}</span>
                   </td>
 
-                  {/* Type */}
-                  <td className="px-4 py-3 hidden md:table-cell">
+                  <td className="px-4 py-3">
                     {(!work.type || work.type === 'client') ? (
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                         👤 Clienta
@@ -114,65 +206,19 @@ export default function WorksTable({ works, onEdit, onView }) {
                     )}
                   </td>
 
-                  {/* Date */}
-                  <td className="px-4 py-3 hidden lg:table-cell text-brand-text-muted text-xs">
+                  <td className="px-4 py-3 text-brand-text-muted text-xs">
                     {format(dateObj, 'dd/MM/yyyy', { locale: es })}
                   </td>
 
-                  {/* Status */}
                   <td className="px-4 py-3 text-center">
                     <Badge variant={work.published ? 'success' : 'default'} size="sm" className="whitespace-nowrap">
                       {work.published ? 'Publicado' : 'Oculto'}
                     </Badge>
                   </td>
 
-                  {/* Actions — always-visible icon buttons */}
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      {/* View */}
-                      <button
-                        onClick={() => onView(work)}
-                        title="Ver fotos"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-
-                      {/* Edit */}
-                      <button
-                        onClick={() => onEdit(work)}
-                        title="Editar"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-
-                      {/* Toggle publish */}
-                      <button
-                        onClick={() => handleTogglePublish(work)}
-                        title={work.published ? 'Ocultar' : 'Publicar'}
-                        disabled={isToggling}
-                        className={cn(
-                          'flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
-                          work.published
-                            ? 'text-amber-500 hover:bg-amber-50 hover:text-amber-600'
-                            : 'text-brand-text-muted hover:bg-green-50 hover:text-green-600'
-                        )}
-                      >
-                        {work.published
-                          ? <EyeOff className="h-4 w-4" />
-                          : <Globe className="h-4 w-4" />
-                        }
-                      </button>
-
-                      {/* Delete */}
-                      <button
-                        onClick={() => setDeletingId(work.id)}
-                        title="Eliminar"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-red-50 hover:text-red-500"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                    <div className="flex items-center justify-end">
+                      <ActionButtons work={work} isToggling={isToggling} />
                     </div>
                   </td>
                 </tr>
