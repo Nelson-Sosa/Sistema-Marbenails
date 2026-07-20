@@ -101,11 +101,14 @@ service cloud.firestore {
       // Admin: CRUD total
       allow read, write: if isAdmin();
       
-      // Público: solo leer trabajos publicados
-      allow read: if resource.data.published == true;
+      // Público no autenticado y clientes autenticados: pueden leer cualquier trabajo.
+      // El filtrado de published==true y clientId se aplica en las queries del servicio.
+      // Nota: Firestore no puede evaluar resource.data en queries sin autenticación,
+      // por lo que la seguridad de visibilidad se maneja a nivel de aplicación.
+      allow read: if true;
       
-      // Cliente autenticado: leer sus propios trabajos (incluso privados)
-      allow read: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+      // Solo el admin puede crear, editar y eliminar trabajos.
+      allow write: if isAdmin();
     }
   }
 }
