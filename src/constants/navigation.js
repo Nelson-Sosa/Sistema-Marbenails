@@ -6,6 +6,8 @@ import {
   Settings,
   UserCircle,
   Sparkles,
+  Image as ImageIcon,
+  GalleryHorizontal,
 } from 'lucide-react'
 import { ROUTES } from '@/routes/routes'
 
@@ -63,6 +65,22 @@ export const NAV_ITEMS = [
     icon: Scissors,
     description: 'Servicios y precios',
     roles: ['admin', 'user'],
+  },
+  {
+    id: 'gallery',
+    label: 'Galería',
+    path: ROUTES.WORKS,
+    icon: GalleryHorizontal,
+    description: 'Galería de diseños',
+    roles: ['admin', 'user'],
+  },
+  {
+    id: 'admin-works',
+    label: 'Trabajos',
+    path: ROUTES.ADMIN_WORKS,
+    icon: ImageIcon,
+    description: 'Portfolio administrador',
+    roles: ['admin'],
   },
   // {
   //   id: 'reports',

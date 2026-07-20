@@ -72,6 +72,7 @@ export const COLLECTIONS = {
   NOTIFICATIONS: 'notifications',
   INCOME: 'income',
   LOYALTY_HISTORY: 'loyaltyHistory',
+  WORKS: 'works',
 }
 
 /** Default professional ID for MVP mono-professional mode */

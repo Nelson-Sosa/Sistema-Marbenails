@@ -17,6 +17,8 @@ export const ROUTES = {
   REPORTS: '/reports',
   SETTINGS: '/settings',
   PROFILE: '/profile',
+  WORKS: '/trabajos',
+  ADMIN_WORKS: '/admin/trabajos',
 
   // Nested routes (future)
   APPOINTMENT_DETAIL: '/appointments/:id',

@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { X, Clock, Calendar, Scissors } from 'lucide-react'
+import { X, Clock, Calendar, Scissors, Camera } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { APPOINTMENT_STATUS, STATUS_CONFIG } from '@/constants/app'
 import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
+import AddWorkModal from '@/pages/Works/components/AddWorkModal'
 
 function toMinutes(time) {
   const [h, m] = time.split(':').map(Number)
@@ -20,6 +21,7 @@ function formatDuration(minutes) {
 }
 
 export default function AppointmentDrawer({ appointment, isOpen, onClose, onEdit, onStatusChange }) {
+  const [addWorkOpen, setAddWorkOpen] = useState(false)
   if (!appointment) return null
 
   const aptDate = appointment.date?.toDate ? appointment.date.toDate() : new Date(appointment.date)
@@ -93,15 +95,37 @@ export default function AppointmentDrawer({ appointment, isOpen, onClose, onEdit
         </div>
 
         {/* Actions */}
-        <div className="border-t border-brand-border px-4 py-3 flex gap-2 shrink-0">
-          <Button variant="outline" onClick={onClose} className="flex-1">
-            Cerrar
-          </Button>
-          <Button onClick={onEdit} className="flex-1">
-            Editar
-          </Button>
+        <div className="border-t border-brand-border px-4 py-3 flex flex-col gap-2 shrink-0">
+          {/* Add work button — visible only for completed appointments */}
+          {appointment.status === APPOINTMENT_STATUS.DONE && (
+            <Button
+              variant="secondary"
+              onClick={() => setAddWorkOpen(true)}
+              className="w-full"
+              leftIcon={<Camera className="h-4 w-4" />}
+            >
+              Agregar trabajo
+            </Button>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose} className="flex-1">
+              Cerrar
+            </Button>
+            <Button onClick={onEdit} className="flex-1">
+              Editar
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* AddWork Modal */}
+      {addWorkOpen && (
+        <AddWorkModal
+          isOpen={addWorkOpen}
+          onClose={() => setAddWorkOpen(false)}
+          appointment={appointment}
+        />
+      )}
     </>
   )
 }

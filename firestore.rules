@@ -95,5 +95,17 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
     }
+
+    // ─── TRABAJOS (PORTFOLIO) ───
+    match /works/{workId} {
+      // Admin: CRUD total
+      allow read, write: if isAdmin();
+      
+      // Público: solo leer trabajos publicados
+      allow read: if resource.data.published == true;
+      
+      // Cliente autenticado: leer sus propios trabajos (incluso privados)
+      allow read: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+    }
   }
 }
