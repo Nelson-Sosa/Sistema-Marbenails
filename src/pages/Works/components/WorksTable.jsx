@@ -1,32 +1,35 @@
 /**
  * WorksTable — Data grid for works in the admin panel.
- * Displays a list of works with their thumbnail, title, service, date, and status.
+ * Displays a list of works with their thumbnail, title, service, date, status and actions.
  */
 
 import { useState } from 'react'
-import { MoreVertical, Image as ImageIcon, CheckCircle, XCircle } from 'lucide-react'
+import { Eye, Pencil, Trash2, Globe, EyeOff, Image as ImageIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { getThumbnailUrl } from '@/services/cloudinary/cloudinaryService'
 import { useDeleteWork, useToggleWorkPublished } from '@/hooks/useWorks'
 import Badge from '@/components/ui/Badge'
-import Button from '@/components/ui/Button'
-import DropdownPortal from '@/components/ui/DropdownPortal'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import toast from 'react-hot-toast'
+import { cn } from '@/utils/cn'
 
 export default function WorksTable({ works, onEdit, onView }) {
   const [deletingId, setDeletingId] = useState(null)
-  
+  const [togglingId, setTogglingId] = useState(null)
+
   const { mutateAsync: togglePublish } = useToggleWorkPublished()
   const { mutateAsync: deleteWork, isPending: isDeleting } = useDeleteWork()
 
   const handleTogglePublish = async (work) => {
+    setTogglingId(work.id)
     try {
       await togglePublish({ id: work.id, published: !work.published })
       toast.success(work.published ? 'Trabajo ocultado' : 'Trabajo publicado')
     } catch (err) {
       toast.error('No se pudo actualizar el estado.')
+    } finally {
+      setTogglingId(null)
     }
   }
 
@@ -61,7 +64,8 @@ export default function WorksTable({ works, onEdit, onView }) {
             {works.map((work) => {
               const mainPhoto = work.photos?.[0]
               const dateObj = work.createdAt?.toDate ? work.createdAt.toDate() : new Date(work.createdAt || Date.now())
-              
+              const isToggling = togglingId === work.id
+
               return (
                 <tr key={work.id} className="transition-colors hover:bg-brand-pastel/5">
                   {/* Photo & Title */}
@@ -94,9 +98,7 @@ export default function WorksTable({ works, onEdit, onView }) {
 
                   {/* Service */}
                   <td className="px-4 py-3 hidden sm:table-cell">
-                    <span className="truncate text-brand-text-muted">
-                      {work.serviceName}
-                    </span>
+                    <span className="text-brand-text-muted">{work.serviceName}</span>
                   </td>
 
                   {/* Type */}
@@ -119,54 +121,59 @@ export default function WorksTable({ works, onEdit, onView }) {
 
                   {/* Status */}
                   <td className="px-4 py-3 text-center">
-                    <Badge
-                      variant={work.published ? 'success' : 'default'}
-                      size="sm"
-                      className="whitespace-nowrap"
-                    >
+                    <Badge variant={work.published ? 'success' : 'default'} size="sm" className="whitespace-nowrap">
                       {work.published ? 'Publicado' : 'Oculto'}
                     </Badge>
                   </td>
 
-                  {/* Actions */}
-                  <td className="px-4 py-3 text-right">
-                    <DropdownPortal
-                      trigger={
-                        <Button variant="ghost" size="xs" className="px-1.5 h-8">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      }
-                      menuClasses="w-48"
-                      align="end"
-                    >
-                      <DropdownPortal.Item onClick={() => onView(work)}>
-                        <ImageIcon className="mr-2 h-4 w-4" />
-                        Ver fotos
-                      </DropdownPortal.Item>
-                      <DropdownPortal.Item onClick={() => handleTogglePublish(work)}>
-                        {work.published ? (
-                          <>
-                            <XCircle className="mr-2 h-4 w-4 text-amber-500" />
-                            Ocultar públicamente
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="mr-2 h-4 w-4 text-brand-success" />
-                            Mostrar públicamente
-                          </>
-                        )}
-                      </DropdownPortal.Item>
-                      <DropdownPortal.Item onClick={() => onEdit(work)}>
-                        Editar información
-                      </DropdownPortal.Item>
-                      <DropdownPortal.Divider />
-                      <DropdownPortal.Item
-                        variant="danger"
-                        onClick={() => setDeletingId(work.id)}
+                  {/* Actions — always-visible icon buttons */}
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      {/* View */}
+                      <button
+                        onClick={() => onView(work)}
+                        title="Ver fotos"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
                       >
-                        Eliminar trabajo
-                      </DropdownPortal.Item>
-                    </DropdownPortal>
+                        <Eye className="h-4 w-4" />
+                      </button>
+
+                      {/* Edit */}
+                      <button
+                        onClick={() => onEdit(work)}
+                        title="Editar"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-brand-pastel hover:text-brand-primary"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+
+                      {/* Toggle publish */}
+                      <button
+                        onClick={() => handleTogglePublish(work)}
+                        title={work.published ? 'Ocultar' : 'Publicar'}
+                        disabled={isToggling}
+                        className={cn(
+                          'flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+                          work.published
+                            ? 'text-amber-500 hover:bg-amber-50 hover:text-amber-600'
+                            : 'text-brand-text-muted hover:bg-green-50 hover:text-green-600'
+                        )}
+                      >
+                        {work.published
+                          ? <EyeOff className="h-4 w-4" />
+                          : <Globe className="h-4 w-4" />
+                        }
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => setDeletingId(work.id)}
+                        title="Eliminar"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-muted transition-colors hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )
@@ -180,7 +187,7 @@ export default function WorksTable({ works, onEdit, onView }) {
         onClose={() => setDeletingId(null)}
         onConfirm={handleDelete}
         title="Eliminar Trabajo"
-        message="¿Estás seguro de que deseas eliminar este trabajo? Esta acción no se puede deshacer. Las imágenes asociadas deberán ser eliminadas manualmente de Cloudinary."
+        message="¿Estás segura de que deseas eliminar este trabajo? Esta acción no se puede deshacer."
         confirmLabel="Eliminar"
         variant="danger"
         isLoading={isDeleting}
