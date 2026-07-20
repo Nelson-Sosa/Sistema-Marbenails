@@ -27,7 +27,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
       {/* ── Mobile Overlay Backdrop ─────────────────────────────────────── */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[90] bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={onMobileClose}
           aria-hidden="true"
         />
@@ -38,7 +38,7 @@ function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose })
         id="main-sidebar"
         aria-label="Navegación principal"
         className={cn(
-          'fixed top-0 left-0 z-30 flex h-[100dvh] flex-col',
+          'fixed top-0 left-0 z-[100] flex h-[100dvh] flex-col',
           'border-r border-brand-pastel bg-brand-bg',
           'transition-all duration-300 ease-in-out',
           'hidden lg:flex',
