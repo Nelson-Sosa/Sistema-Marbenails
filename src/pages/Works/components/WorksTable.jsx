@@ -107,7 +107,7 @@ export default function WorksTable({ works, onEdit, onView }) {
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
-                        ⭐ Portfolio
+                        ⭐ Diseño Libre
                       </span>
                     )}
                   </td>
@@ -147,12 +147,12 @@ export default function WorksTable({ works, onEdit, onView }) {
                         {work.published ? (
                           <>
                             <XCircle className="mr-2 h-4 w-4 text-amber-500" />
-                            Ocultar de galería
+                            Ocultar públicamente
                           </>
                         ) : (
                           <>
                             <CheckCircle className="mr-2 h-4 w-4 text-brand-success" />
-                            Publicar en galería
+                            Mostrar públicamente
                           </>
                         )}
                       </DropdownPortal.Item>

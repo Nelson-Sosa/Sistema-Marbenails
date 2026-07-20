@@ -170,10 +170,10 @@ export default function AddWorkModal({ isOpen, onClose, appointment }) {
           />
           <div>
             <p className="text-sm font-medium text-brand-text">
-              Mostrar en galería pública
+              Mostrar públicamente
             </p>
             <p className="text-xs text-brand-text-muted">
-              El trabajo será visible para nuevas clientas en la galería del sitio.
+              El trabajo será visible para nuevas clientas en el sitio web.
             </p>
           </div>
         </label>

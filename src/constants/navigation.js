@@ -67,19 +67,11 @@ export const NAV_ITEMS = [
     roles: ['admin', 'user'],
   },
   {
-    id: 'gallery',
-    label: 'Galería',
-    path: ROUTES.WORKS,
-    icon: GalleryHorizontal,
-    description: 'Galería de diseños',
-    roles: ['admin', 'user'],
-  },
-  {
     id: 'admin-works',
     label: 'Trabajos',
     path: ROUTES.ADMIN_WORKS,
     icon: ImageIcon,
-    description: 'Portfolio administrador',
+    description: 'Gestión de trabajos',
     roles: ['admin'],
   },
   // {

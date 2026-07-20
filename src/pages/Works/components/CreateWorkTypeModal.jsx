@@ -58,9 +58,9 @@ export default function CreateWorkTypeModal({ isOpen, onClose, onSelectPortfolio
             <Sparkles className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <p className="font-semibold text-brand-text">Trabajo para portfolio</p>
+            <p className="font-semibold text-brand-text">Diseño libre</p>
             <p className="mt-0.5 text-xs text-brand-text-muted">
-              Diseño independiente. No se asocia a ninguna clienta, solo va a la galería.
+              Diseño independiente. No se asocia a ninguna clienta, solo se muestra públicamente.
             </p>
           </div>
         </button>

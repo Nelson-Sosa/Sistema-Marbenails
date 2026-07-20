@@ -101,12 +101,12 @@ export default function AddPortfolioWorkModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Nuevo Trabajo (Portfolio)"
+      title="Nuevo Diseño Libre"
       maxWidthClass="max-w-lg"
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <p className="text-sm text-brand-text-muted pb-2 border-b border-brand-pastel">
-          Este trabajo se agregará directamente a la galería y no estará asociado a ninguna clienta.
+          Este diseño se agregará directamente para mostrarse públicamente y no estará asociado a ninguna clienta.
         </p>
 
         {/* Photos */}
@@ -188,7 +188,7 @@ export default function AddPortfolioWorkModal({ isOpen, onClose }) {
           />
           <div>
             <p className="text-sm font-medium text-brand-text">
-              Mostrar en galería pública
+              Mostrar públicamente
             </p>
             <p className="text-xs text-brand-text-muted">
               El trabajo será visible para todas las visitantes del sitio.

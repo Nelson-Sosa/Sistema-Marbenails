@@ -79,9 +79,9 @@ export default function WorksPage() {
       {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-brand-text">Trabajos (Portfolio)</h1>
+          <h1 className="text-2xl font-bold text-brand-text">Trabajos</h1>
           <p className="mt-1 text-sm text-brand-text-muted">
-            Gestioná los diseños realizados. Los trabajos publicados aparecerán en la galería pública.
+            Gestioná las fotos de tus trabajos. Los diseños publicados se mostrarán públicamente.
           </p>
         </div>
         <Button onClick={() => setIsTypeModalOpen(true)} leftIcon={<Plus className="h-4 w-4" />}>
@@ -122,7 +122,7 @@ export default function WorksPage() {
         >
           <option value="">Todos los tipos</option>
           <option value="client">Clientas</option>
-          <option value="portfolio">Portfolio</option>
+          <option value="portfolio">Diseños libres</option>
         </select>
 
         <select

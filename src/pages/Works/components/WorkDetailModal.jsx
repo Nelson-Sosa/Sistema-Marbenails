@@ -61,7 +61,7 @@ export default function WorkDetailModal({ isOpen, onClose, work }) {
   const handleTogglePublish = async () => {
     try {
       await togglePublish({ id: work.id, published: !work.published })
-      toast.success(work.published ? 'Trabajo ocultado' : 'Trabajo publicado en galería')
+      toast.success(work.published ? 'Trabajo ocultado' : 'Trabajo mostrado públicamente')
     } catch (err) {
       toast.error('Error al cambiar el estado.')
     }
@@ -169,12 +169,12 @@ export default function WorkDetailModal({ isOpen, onClose, work }) {
                   {work.published ? (
                     <>
                       <XCircle className="mr-2 h-4 w-4 text-amber-500" />
-                      Ocultar de galería
+                      Ocultar públicamente
                     </>
                   ) : (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4 text-brand-success" />
-                      Publicar en galería
+                      Mostrar públicamente
                     </>
                   )}
                 </Button>
