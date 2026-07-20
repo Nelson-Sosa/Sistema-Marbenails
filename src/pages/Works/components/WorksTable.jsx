@@ -51,7 +51,8 @@ export default function WorksTable({ works, onEdit, onView }) {
             <tr>
               <th className="px-4 py-3">Trabajo</th>
               <th className="px-4 py-3 hidden sm:table-cell">Servicio</th>
-              <th className="px-4 py-3 hidden md:table-cell">Fecha</th>
+              <th className="px-4 py-3 hidden md:table-cell">Tipo</th>
+              <th className="px-4 py-3 hidden lg:table-cell">Fecha</th>
               <th className="px-4 py-3 text-center">Estado</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -98,8 +99,21 @@ export default function WorksTable({ works, onEdit, onView }) {
                     </span>
                   </td>
 
+                  {/* Type */}
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    {(!work.type || work.type === 'client') ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                        👤 Clienta
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
+                        ⭐ Portfolio
+                      </span>
+                    )}
+                  </td>
+
                   {/* Date */}
-                  <td className="px-4 py-3 hidden md:table-cell text-brand-text-muted">
+                  <td className="px-4 py-3 hidden lg:table-cell text-brand-text-muted text-xs">
                     {format(dateObj, 'dd/MM/yyyy', { locale: es })}
                   </td>
 

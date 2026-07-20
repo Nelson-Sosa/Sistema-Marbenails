@@ -48,8 +48,9 @@ const worksRef = () => collection(db, COLLECTIONS.WORKS)
  */
 export async function createWork(data) {
   const payload = {
-    appointmentId: data.appointmentId,
-    clientId: data.clientId,
+    type: data.type || 'client', // 'client' | 'portfolio'
+    appointmentId: data.appointmentId || null,
+    clientId: data.clientId || null,
     serviceId: data.serviceId,
     serviceName: data.serviceName ?? '',
     categoryId: data.categoryId ?? '',

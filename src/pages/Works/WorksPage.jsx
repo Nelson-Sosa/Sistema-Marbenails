@@ -10,6 +10,8 @@ import Spinner from '@/components/ui/Spinner'
 import Button from '@/components/ui/Button'
 import WorksTable from './components/WorksTable'
 import WorkDetailModal from './components/WorkDetailModal'
+import CreateWorkTypeModal from './components/CreateWorkTypeModal'
+import AddPortfolioWorkModal from './components/AddPortfolioWorkModal'
 
 export default function WorksPage() {
   const { data: works, isLoading, error } = useWorks()
@@ -17,18 +19,29 @@ export default function WorksPage() {
 
   const [search, setSearch] = useState('')
   const [filterService, setFilterService] = useState('')
+  const [filterType, setFilterType] = useState('') // '' | 'client' | 'portfolio'
+  const [filterStatus, setFilterStatus] = useState('') // '' | 'published' | 'private'
+  
   const [selectedWork, setSelectedWork] = useState(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isTypeModalOpen, setIsTypeModalOpen] = useState(false)
+  const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false)
 
-  // Filter works based on search & selected service
+  // Filter works based on search, service, type & status
   const filteredWorks = useMemo(() => {
     if (!works) return []
     return works.filter((w) => {
       const matchSearch = w.title.toLowerCase().includes(search.toLowerCase())
       const matchService = filterService ? w.serviceId === filterService : true
-      return matchSearch && matchService
+      const matchType = filterType ? w.type === filterType || (filterType === 'client' && !w.type) : true
+      
+      let matchStatus = true
+      if (filterStatus === 'published') matchStatus = w.published === true
+      if (filterStatus === 'private') matchStatus = w.published === false
+
+      return matchSearch && matchService && matchType && matchStatus
     })
-  }, [works, search, filterService])
+  }, [works, search, filterService, filterType, filterStatus])
 
   const handleEdit = (work) => {
     setSelectedWork(work)
@@ -71,10 +84,13 @@ export default function WorksPage() {
             Gestioná los diseños realizados. Los trabajos publicados aparecerán en la galería pública.
           </p>
         </div>
+        <Button onClick={() => setIsTypeModalOpen(true)} leftIcon={<Plus className="h-4 w-4" />}>
+          Nuevo trabajo
+        </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center flex-wrap">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-text-muted" />
           <input
@@ -89,7 +105,7 @@ export default function WorksPage() {
         <select
           value={filterService}
           onChange={(e) => setFilterService(e.target.value)}
-          className="h-10 w-full rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary sm:w-48"
+          className="h-10 w-full sm:w-auto flex-1 max-w-xs rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
         >
           <option value="">Todos los servicios</option>
           {services?.map((s) => (
@@ -97,6 +113,26 @@ export default function WorksPage() {
               {s.name}
             </option>
           ))}
+        </select>
+
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="h-10 w-full sm:w-auto rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+        >
+          <option value="">Todos los tipos</option>
+          <option value="client">Clientas</option>
+          <option value="portfolio">Portfolio</option>
+        </select>
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="h-10 w-full sm:w-auto rounded-lg border border-brand-pastel bg-brand-card px-3 text-sm text-brand-text focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+        >
+          <option value="">Todos los estados</option>
+          <option value="published">Publicados</option>
+          <option value="private">Ocultos</option>
         </select>
       </div>
 
@@ -125,6 +161,21 @@ export default function WorksPage() {
         onClose={handleCloseDetail}
         work={selectedWork}
       />
+
+      {/* New Work Selection Modal */}
+      <CreateWorkTypeModal
+        isOpen={isTypeModalOpen}
+        onClose={() => setIsTypeModalOpen(false)}
+        onSelectPortfolio={() => setIsPortfolioModalOpen(true)}
+      />
+
+      {/* Portfolio Work Modal */}
+      {isPortfolioModalOpen && (
+        <AddPortfolioWorkModal
+          isOpen={isPortfolioModalOpen}
+          onClose={() => setIsPortfolioModalOpen(false)}
+        />
+      )}
     </div>
   )
 }

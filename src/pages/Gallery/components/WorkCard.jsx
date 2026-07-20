@@ -34,11 +34,19 @@ export default function WorkCard({ work, onClick }) {
           <h3 className="text-lg font-bold text-white drop-shadow-sm line-clamp-1">
             {work.title}
           </h3>
-          <div className="mt-1 flex items-center gap-1.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <Scissors className="h-3.5 w-3.5 text-brand-pastel" />
+          <div className="mt-1 flex items-center gap-1.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex-wrap">
+            <Scissors className="h-3.5 w-3.5 text-brand-pastel shrink-0" />
             <span className="text-sm font-medium text-brand-pastel line-clamp-1">
               {work.serviceName}
             </span>
+            {work.categoryName && (
+              <>
+                <span className="text-brand-pastel/50 text-xs mx-1">•</span>
+                <span className="text-xs font-medium text-brand-pastel/80 line-clamp-1">
+                  {work.categoryName}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>

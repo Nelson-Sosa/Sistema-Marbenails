@@ -52,11 +52,16 @@ export default function GalleryDetailModal({ isOpen, onClose, work }) {
         {/* Content Area */}
         <div className="pt-6 space-y-4">
           <div>
-            <div className="mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2 flex-wrap">
               <span className="flex items-center gap-1.5 rounded-full bg-brand-pastel/30 px-2.5 py-1 text-xs font-medium text-brand-text">
                 <Scissors className="h-3.5 w-3.5 text-brand-primary" />
                 {work.serviceName}
               </span>
+              {work.categoryName && (
+                <span className="rounded-full bg-brand-pastel/20 px-2.5 py-1 text-xs font-medium text-brand-text-muted">
+                  {work.categoryName}
+                </span>
+              )}
             </div>
             <h2 className="text-2xl font-bold text-brand-text">{work.title}</h2>
           </div>
