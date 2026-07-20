@@ -67,6 +67,14 @@ export const NAV_ITEMS = [
     roles: ['admin', 'user'],
   },
   {
+    id: 'public-works',
+    label: 'Trabajos',
+    path: ROUTES.WORKS,
+    icon: ImageIcon,
+    description: 'Nuestros diseños',
+    roles: ['user'],
+  },
+  {
     id: 'admin-works',
     label: 'Trabajos',
     path: ROUTES.ADMIN_WORKS,
