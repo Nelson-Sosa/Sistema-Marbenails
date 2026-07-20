@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/utils/cn'
+import { Z_INDEX } from '@/constants/zIndex'
 
-function Modal({ isOpen, onClose, title, children, className, maxWidthClass = "max-w-md" }) {
+function Modal({ isOpen, onClose, title, children, className, maxWidthClass = "max-w-md", hideHeader }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -16,28 +18,35 @@ function Modal({ isOpen, onClose, title, children, className, maxWidthClass = "m
 
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity" 
-        onClick={onClose} 
+  // Render via portal directly into document.body so the modal always sits
+  // on top of every element (sidebar z-30, header z-200, dropdowns z-1000).
+  return createPortal(
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: Z_INDEX.MODAL }}
+    >
+      {/* Overlay — covers the full viewport including sidebar */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div 
+      <div
         className={cn(
-          "relative flex flex-col w-full max-w-[95vw] max-h-[90vh] rounded-2xl border border-brand-pastel bg-brand-card shadow-2xl overflow-hidden z-50",
+          "relative flex flex-col w-full max-w-[95vw] max-h-[90vh] rounded-2xl border border-brand-pastel bg-brand-card shadow-2xl overflow-hidden",
           maxWidthClass,
           className
         )}
       >
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 z-50 rounded-lg p-1.5 text-brand-text-muted hover:bg-brand-pastel hover:text-brand-primary transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
+        {!hideHeader && (
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 z-10 rounded-lg p-1.5 text-brand-text-muted hover:bg-brand-pastel hover:text-brand-primary transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
 
         {title && (
           <div className="px-6 pt-6 pb-2 shrink-0">
@@ -49,7 +58,8 @@ function Modal({ isOpen, onClose, title, children, className, maxWidthClass = "m
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
