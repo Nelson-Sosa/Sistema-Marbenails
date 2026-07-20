@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { format } from 'date-fns'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
@@ -15,6 +15,7 @@ import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import TimeSelect from '@/components/ui/TimeSelect'
 import { cn } from '@/utils/cn'
 
 const schema = z.object({
@@ -68,7 +69,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
     return format(d, 'yyyy-MM-dd')
   }
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting }, watch } = useForm({
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       clientId: appointmentToEdit?.clientId || '',
@@ -236,12 +237,19 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
           />
 
           {/* Time Input */}
-          <Input 
-            label="Hora del turno" 
-            type="time" 
-            step={900}
-            error={errors.time?.message}
-            {...register('time')}
+          <Controller
+            name="time"
+            control={control}
+            render={({ field }) => (
+              <TimeSelect
+                label="Hora del turno"
+                startHour={7}
+                endHour={20}
+                stepMinutes={15}
+                error={errors.time?.message}
+                {...field}
+              />
+            )}
           />
 
           <div className="mt-4 flex justify-end gap-3">

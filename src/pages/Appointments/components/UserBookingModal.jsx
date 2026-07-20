@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { X, ChevronLeft, Check, Clock } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
@@ -15,6 +15,7 @@ import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import TimeSelect from '@/components/ui/TimeSelect'
 
 const SCHEMA_STEP2 = z.object({
   date: z.string().min(1, 'Seleccioná una fecha'),
@@ -64,7 +65,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
     return services.find((s) => s.id === selectedServiceId) || null
   }, [services, selectedServiceId])
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setValue, control } = useForm({
     resolver: zodResolver(SCHEMA_STEP2),
     defaultValues: { date: '', time: '10:00' }
   })
@@ -273,7 +274,20 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
                 error={errors.date?.message}
                 {...register('date')}
               />
-              <Input label="Hora" type="time" step={900} error={errors.time?.message} {...register('time')} />
+              <Controller
+                name="time"
+                control={control}
+                render={({ field }) => (
+                  <TimeSelect
+                    label="Hora"
+                    startHour={7}
+                    endHour={20}
+                    stepMinutes={15}
+                    error={errors.time?.message}
+                    {...field}
+                  />
+                )}
+              />
             </div>
 
             <div className="mt-4 flex justify-end gap-3">
