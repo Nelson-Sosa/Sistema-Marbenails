@@ -38,13 +38,15 @@ function validateFile(file) {
 
 /**
  * Upload a single image to Cloudinary using an unsigned preset.
+ * Includes automatic retry logic for network stability.
  *
  * @param {File}   file   - The image file to upload
- * @param {string} folder - Cloudinary folder path (e.g. 'marbenails/works/appointmentId')
+ * @param {string} folder - Cloudinary folder path
  * @param {(progress: number) => void} [onProgress] - Optional progress callback (0–100)
+ * @param {number} retries - Number of retries left
  * @returns {Promise<{ publicId: string, secureUrl: string }>}
  */
-export async function uploadImage(file, folder = 'marbenails/works', onProgress) {
+export async function uploadImage(file, folder = 'marbenails/works', onProgress, retries = 2) {
   if (!CLOUD_NAME || !UPLOAD_PRESET) {
     throw new Error(
       'Cloudinary no está configurado. Agregá VITE_CLOUDINARY_CLOUD_NAME y VITE_CLOUDINARY_UPLOAD_PRESET en .env.local'
@@ -57,51 +59,69 @@ export async function uploadImage(file, folder = 'marbenails/works', onProgress)
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('folder', folder)
-  // Enable automatic quality and format optimization
   formData.append('quality', 'auto')
 
   const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`
 
-  // Use XMLHttpRequest to support upload progress reporting
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
+  const attemptUpload = () => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', url)
+      
+      // Extended timeout for slow mobile networks (60 seconds)
+      xhr.timeout = 60000;
 
-    xhr.open('POST', url)
-
-    if (onProgress) {
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const pct = Math.round((event.loaded / event.total) * 100)
-          onProgress(pct)
-        }
-      })
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-          const data = JSON.parse(xhr.responseText)
-          resolve({
-            publicId: data.public_id,
-            secureUrl: data.secure_url,
-          })
-        } catch {
-          reject(new Error('Respuesta inesperada de Cloudinary.'))
-        }
-      } else {
-        reject(new Error(`Error al subir imagen: ${xhr.status} ${xhr.statusText}`))
+      if (onProgress) {
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const pct = Math.round((event.loaded / event.total) * 100)
+            onProgress(pct)
+          }
+        })
       }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText)
+            resolve({
+              publicId: data.public_id,
+              secureUrl: data.secure_url,
+            })
+          } catch {
+            reject(new Error('Respuesta inesperada de Cloudinary.'))
+          }
+        } else {
+          reject(new Error(`Error al subir imagen: ${xhr.status} ${xhr.statusText}`))
+        }
+      }
+
+      xhr.onerror = () => reject(new Error('Error_Network'))
+      xhr.ontimeout = () => reject(new Error('Error_Timeout'))
+      xhr.onabort = () => reject(new Error('Subida cancelada.'))
+
+      xhr.send(formData)
+    })
+  }
+
+  try {
+    return await attemptUpload()
+  } catch (error) {
+    if ((error.message === 'Error_Network' || error.message === 'Error_Timeout') && retries > 0) {
+      console.warn(`Upload failed, retrying... (${retries} retries left)`)
+      // Wait 1.5 seconds before retrying
+      await new Promise(res => setTimeout(res, 1500))
+      return uploadImage(file, folder, onProgress, retries - 1)
     }
-
-    xhr.onerror = () => reject(new Error('Error de red al subir la imagen.'))
-    xhr.onabort = () => reject(new Error('Subida cancelada.'))
-
-    xhr.send(formData)
-  })
+    
+    if (error.message === 'Error_Network') throw new Error('Error de red al subir la imagen. Verificá tu conexión a internet.')
+    if (error.message === 'Error_Timeout') throw new Error('Tiempo de espera agotado al subir la imagen. Tu conexión es muy lenta.')
+    throw error
+  }
 }
 
 /**
- * Upload multiple images to Cloudinary in parallel.
+ * Upload multiple images to Cloudinary in parallel, with a concurrency limit.
  *
  * @param {File[]} files - Array of image files
  * @param {string} folder - Cloudinary folder path
@@ -109,10 +129,23 @@ export async function uploadImage(file, folder = 'marbenails/works', onProgress)
  * @returns {Promise<Array<{ publicId: string, secureUrl: string }>>}
  */
 export async function uploadImages(files, folder, onProgress) {
-  const uploads = files.map((file, index) =>
-    uploadImage(file, folder, (pct) => onProgress?.(index, pct))
-  )
-  return Promise.all(uploads)
+  // Mobile connections often fail when uploading many large files at exactly the same time.
+  // Instead of Promise.all, we upload with a concurrency limit of 2.
+  const results = new Array(files.length)
+  let currentIndex = 0
+
+  const worker = async () => {
+    while (currentIndex < files.length) {
+      const i = currentIndex++
+      results[i] = await uploadImage(files[i], folder, (pct) => onProgress?.(i, pct))
+    }
+  }
+
+  // Start 2 workers max
+  const workers = Array.from({ length: Math.min(2, files.length) }, () => worker())
+  await Promise.all(workers)
+
+  return results
 }
 
 /**
