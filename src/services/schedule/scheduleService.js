@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/firebase/config'
 import { COLLECTIONS, APPOINTMENT_STATUS } from '@/constants/app'
 
@@ -24,6 +24,17 @@ export async function getScheduleSettings() {
     console.error('Error fetching schedule settings:', error)
   }
   return DEFAULT_SCHEDULE_SETTINGS
+}
+
+/**
+ * Updates the global schedule settings in Firestore.
+ */
+export async function updateScheduleSettings(settingsData) {
+  const ref = doc(db, COLLECTIONS.SETTINGS, 'business')
+  await setDoc(ref, {
+    ...settingsData,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
 }
 
 /**

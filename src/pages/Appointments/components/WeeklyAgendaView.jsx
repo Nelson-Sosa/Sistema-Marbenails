@@ -257,13 +257,14 @@ export default function WeeklyAgendaView() {
       </div>
 
       {/* ── Calendar Grid ───────────────────────────────────────────────── */}
-      {isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <Spinner size="lg" />
-        </div>
-      ) : (
-        <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-brand-border bg-brand-card">
-          <div className="flex flex-col min-w-[780px] select-none">
+      <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-brand-border bg-brand-card relative">
+        {isLoading && (
+          <div className="absolute inset-0 z-50 bg-brand-bg/50 backdrop-blur-[2px] flex flex-col items-center justify-center">
+            <Spinner size="lg" />
+            <p className="mt-4 text-sm font-medium text-brand-text">Cargando agenda...</p>
+          </div>
+        )}
+        <div className="flex flex-col min-w-[780px] select-none">
             {/* ── Sticky Header Row ─────────────────────────────────────── */}
             <div className="sticky top-0 z-30 flex">
               <div className="sticky left-0 z-30 w-20 flex-shrink-0 flex items-center justify-center border-r border-b border-brand-border bg-brand-card backdrop-blur-sm h-10 lg:h-14">
@@ -441,7 +442,7 @@ export default function WeeklyAgendaView() {
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Modal ────────────────────────────────────────────────────────── */}
       {isModalOpen && (

@@ -11,7 +11,7 @@ import { useCreateAppointment, useAppointmentsByDate } from '@/hooks/useAppointm
 import { useScheduleSettings } from '@/hooks/useScheduleSettings'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
 import { getAvailableAppointments } from '@/services/schedule/scheduleService'
-import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
+import { DEPRECATED_BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
@@ -57,7 +57,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
       const [hours, minutes] = data.time.split(':').map(Number)
       const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
     
-      if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
+      if (!DEPRECATED_BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
         ctx.addIssue({ path: ['date'], code: z.ZodIssueCode.custom, message: 'El salón no atiende este día' })
       }
       if (data.time < currentSettings.openingTime || data.time > currentSettings.closingTime) {
@@ -292,8 +292,12 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
               {dateValue && (
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-medium text-brand-text">Horarios disponibles</label>
-                  {loadingAppointments ? (
-                    <p className="text-sm text-brand-text-muted">Cargando horarios...</p>
+                  {loadingAppointments || !settings ? (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-1">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                        <div key={i} className="h-10 rounded-lg bg-brand-pastel/30 animate-pulse" />
+                      ))}
+                    </div>
                   ) : availableSlots.length > 0 ? (
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1">
                        {availableSlots.map(slot => {

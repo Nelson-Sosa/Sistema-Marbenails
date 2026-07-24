@@ -11,7 +11,7 @@ import { useCreateAppointment, useUpdateAppointmentDetails } from '@/hooks/useAp
 import { useAuth } from '@/context/AuthContext'
 import { useScheduleSettings } from '@/hooks/useScheduleSettings'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
-import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
+import { DEPRECATED_BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
@@ -46,7 +46,7 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
       const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
       
       // Validate day of week
-      if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
+      if (!DEPRECATED_BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
         ctx.addIssue({
           path: ['date'],
           code: z.ZodIssueCode.custom,
