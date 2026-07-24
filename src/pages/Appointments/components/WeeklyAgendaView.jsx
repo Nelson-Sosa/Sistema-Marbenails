@@ -442,7 +442,6 @@ export default function WeeklyAgendaView() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* ── Modal ────────────────────────────────────────────────────────── */}
       {isModalOpen && (
