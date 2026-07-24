@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { X, ChevronLeft, Check, Clock } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,37 +7,16 @@ import toast from 'react-hot-toast'
 import { useAuth } from '@/context/AuthContext'
 import { useServices } from '@/hooks/useServices'
 import { useActiveCategories } from '@/hooks/useServiceCategories'
-import { useCreateAppointment } from '@/hooks/useAppointments'
+import { useCreateAppointment, useAppointmentsByDate } from '@/hooks/useAppointments'
+import { useScheduleSettings } from '@/hooks/useScheduleSettings'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
+import { getAvailableAppointments } from '@/services/schedule/scheduleService'
 import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
 import { formatCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import TimeSelect from '@/components/ui/TimeSelect'
-
-const SCHEMA_STEP2 = z.object({
-  date: z.string().min(1, 'Seleccioná una fecha'),
-  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Hora inválida (HH:mm)'),
-}).superRefine((data, ctx) => {
-  if (!data.date || !data.time) return
-  const [year, month, day] = data.date.split('-').map(Number)
-  const [hours, minutes] = data.time.split(':').map(Number)
-  const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
-
-  if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
-    ctx.addIssue({ path: ['date'], code: z.ZodIssueCode.custom, message: 'El salón no atiende este día' })
-  }
-  if (data.time < BUSINESS_HOURS.START || data.time > BUSINESS_HOURS.END) {
-    ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: `El horario de atención es de ${BUSINESS_HOURS.START} a ${BUSINESS_HOURS.END}` })
-  }
-  // NOTA: La validación de turnos en el pasado se maneja en onSubmit según el rol.
-  const minAllowedTime = new Date(Date.now() + 2 * 60 * 60 * 1000)
-  if (appointmentTime < minAllowedTime) {
-    ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: 'Debe ser con al menos 2 hs de anticipación' })
-  }
-})
 
 const STEPS = { CATEGORY: 0, SERVICE: 1, DETAILS: 2 }
 
@@ -46,6 +25,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
   const { data: services, isLoading: loadingServices } = useServices()
   const { data: categories } = useActiveCategories()
   const { mutateAsync: createAppointment, isPending } = useCreateAppointment()
+  const { data: settings } = useScheduleSettings()
 
   const [step, setStep] = useState(STEPS.DETAILS)
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
@@ -65,36 +45,72 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
     return services.find((s) => s.id === selectedServiceId) || null
   }, [services, selectedServiceId])
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setValue, control } = useForm({
-    resolver: zodResolver(SCHEMA_STEP2),
-    defaultValues: { date: '', time: '10:00' }
+  // Build schema dynamically based on settings
+  const schema = React.useMemo(() => {
+    const currentSettings = settings || { openingTime: '07:00', closingTime: '19:00' }
+    return z.object({
+      date: z.string().min(1, 'Seleccioná una fecha'),
+      time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Seleccioná un horario'),
+    }).superRefine((data, ctx) => {
+      if (!data.date || !data.time) return
+      const [year, month, day] = data.date.split('-').map(Number)
+      const [hours, minutes] = data.time.split(':').map(Number)
+      const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
+    
+      if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
+        ctx.addIssue({ path: ['date'], code: z.ZodIssueCode.custom, message: 'El salón no atiende este día' })
+      }
+      if (data.time < currentSettings.openingTime || data.time > currentSettings.closingTime) {
+        ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: `El horario de atención es de ${currentSettings.openingTime} a ${currentSettings.closingTime}` })
+      }
+      const minAllowedTime = new Date(Date.now() + 2 * 60 * 60 * 1000)
+      if (appointmentTime < minAllowedTime) {
+        ctx.addIssue({ path: ['time'], code: z.ZodIssueCode.custom, message: 'Debe ser con al menos 2 hs de anticipación' })
+      }
+    })
+  }, [settings])
+
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setValue, watch, control } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { date: '', time: '' }
   })
+
+  const dateValue = watch('date')
+  const timeValue = watch('time')
+  const selectedDate = dateValue ? new Date(`${dateValue}T12:00:00`) : null
+  const { data: dayAppointments = [], isLoading: loadingAppointments } = useAppointmentsByDate(selectedDate)
+
+  const availableSlots = useMemo(() => {
+    if (!settings || !selectedDate || !selectedService || loadingAppointments) return []
+    return getAvailableAppointments(selectedService.duration, dayAppointments, settings)
+  }, [settings, selectedDate, selectedService, dayAppointments, loadingAppointments])
+
+  // Deselect time if it's no longer available
+  useEffect(() => {
+    if (timeValue && availableSlots.length > 0 && !availableSlots.some(s => s.start === timeValue)) {
+      setValue('time', '')
+    }
+  }, [availableSlots, timeValue, setValue])
+
 
   useEffect(() => {
     if (!isOpen) return
     if (defaultServiceId) {
       setStep(STEPS.DETAILS)
       setSelectedServiceId(defaultServiceId)
-      reset({ date: '', time: '10:00' })
+      reset({ date: '', time: '' })
     } else if (availableCategories.length === 0) {
       setStep(STEPS.SERVICE)
       setSelectedCategoryId(null)
       setSelectedServiceId(null)
-      reset({ date: '', time: '10:00' })
+      reset({ date: '', time: '' })
     } else {
       setStep(STEPS.CATEGORY)
       setSelectedCategoryId(null)
       setSelectedServiceId(null)
-      reset({ date: '', time: '10:00' })
+      reset({ date: '', time: '' })
     }
   }, [isOpen, defaultServiceId])
-
-  useEffect(() => {
-    if (defaultServiceId) {
-      setValue('date', '')
-      setValue('time', '10:00')
-    }
-  }, [defaultServiceId, setValue])
 
   const onSubmit = async (data) => {
     try {
@@ -103,8 +119,6 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
         return
       }
 
-      // Validar que el usuario pueda agendar en esta fecha/hora
-      // Los administradores pueden agendar en cualquier momento (pasado incluido)
       const dateValidation = validateAppointmentDateTime(data.date, data.time, role)
       if (!dateValidation.valid) {
         toast.error(dateValidation.message)
@@ -266,7 +280,7 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <Input
                 type="date"
                 label="Fecha"
@@ -274,25 +288,53 @@ function UserBookingModal({ isOpen, onClose, defaultServiceId = null }) {
                 error={errors.date?.message}
                 {...register('date')}
               />
-              <Controller
-                name="time"
-                control={control}
-                render={({ field }) => (
-                  <TimeSelect
-                    label="Hora"
-                    startHour={7}
-                    endHour={20}
-                    stepMinutes={15}
-                    error={errors.time?.message}
-                    {...field}
-                  />
-                )}
-              />
+              
+              {dateValue && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-brand-text">Horarios disponibles</label>
+                  {loadingAppointments ? (
+                    <p className="text-sm text-brand-text-muted">Cargando horarios...</p>
+                  ) : availableSlots.length > 0 ? (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1">
+                       {availableSlots.map(slot => {
+                         const isSelected = timeValue === slot.start
+                         
+                         // Skip slots that are within 2 hours from now if the date is today
+                         const [hours, minutes] = slot.start.split(':').map(Number)
+                         const [year, month, day] = dateValue.split('-').map(Number)
+                         const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
+                         const minAllowedTime = new Date(Date.now() + 2 * 60 * 60 * 1000)
+                         
+                         if (appointmentTime < minAllowedTime) return null;
+                         
+                         return (
+                           <button 
+                             key={slot.start}
+                             type="button"
+                             onClick={() => setValue('time', slot.start, { shouldValidate: true })}
+                             className={cn(
+                               'rounded-lg border px-2 py-2 text-center text-sm font-medium transition-colors',
+                               isSelected
+                                 ? 'border-brand-primary bg-brand-primary text-white shadow-md'
+                                 : 'border-brand-border bg-brand-bg text-brand-text hover:border-brand-primary/50'
+                             )}
+                           >
+                             {slot.start}
+                           </button>
+                         )
+                       })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-red-400">No hay horarios disponibles para este servicio en la fecha seleccionada.</p>
+                  )}
+                  {errors.time && <p className="text-xs text-red-400">{errors.time.message}</p>}
+                </div>
+              )}
             </div>
 
             <div className="mt-4 flex justify-end gap-3">
               <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>Cancelar</Button>
-              <Button type="submit" loading={isSubmitting || isPending}>Confirmar Reserva</Button>
+              <Button type="submit" loading={isSubmitting || isPending} disabled={!timeValue}>Confirmar Reserva</Button>
             </div>
           </form>
         )}

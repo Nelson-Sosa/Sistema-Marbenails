@@ -17,6 +17,7 @@ import { NOTIFICATION_TYPES } from '@/constants/notifications'
 import { createIncomeEntry } from '@/services/income/incomeService'
 import { createNotification } from '@/services/notifications/notificationsService'
 import { processCompletedVisit } from '@/services/benefits/benefitsService'
+import { getScheduleSettings, checkAvailability } from '@/services/schedule/scheduleService'
 
 const appointmentsRef = () => collection(db, COLLECTIONS.APPOINTMENTS)
 
@@ -243,7 +244,8 @@ export async function getAppointmentsByClient(clientId) {
  * Check whether a new appointment would conflict with an existing one.
  *
  * A conflict exists when two appointments on the same day have overlapping
- * time windows (considering each appointment's duration).
+ * time windows (considering each appointment's duration), or if the new
+ * appointment falls outside business hours.
  * Cancelled and no_show appointments are ignored.
  *
  * @param {Date}   date            - The appointment date (any time component is ignored)
@@ -254,35 +256,8 @@ export async function getAppointmentsByClient(clientId) {
  */
 export async function checkAppointmentConflict(date, time, durationMinutes, excludeId = null) {
   const existing = await getAppointmentsByDate(date)
-
-  const NON_CONFLICTING_STATUSES = [
-    APPOINTMENT_STATUS.CANCELLED,
-    APPOINTMENT_STATUS.NO_SHOW,
-  ]
-
-  // Convert "HH:mm" to minutes since midnight
-  const toMinutes = (t) => {
-    const [h, m] = t.split(':').map(Number)
-    return h * 60 + m
-  }
-
-  const newStart = toMinutes(time)
-  const safeNewDuration = Math.min(Number(durationMinutes) || 60, 720)
-  const newEnd   = newStart + safeNewDuration
-
-  return existing.some((apt) => {
-    // Skip the appointment being edited
-    if (excludeId && apt.id === excludeId) return false
-    // Skip cancelled / no-show — they no longer occupy the slot
-    if (NON_CONFLICTING_STATUSES.includes(apt.status)) return false
-    // Skip appointments without a parseable time
-    if (!apt.time) return false
-
-    const aptStart = toMinutes(apt.time)
-    const safeAptDuration = Math.min(Number(apt.duration) || 60, 720)
-    const aptEnd   = aptStart + safeAptDuration
-
-    // Standard interval overlap check: [newStart, newEnd) ∩ [aptStart, aptEnd) ≠ ∅
-    return newStart < aptEnd && newEnd > aptStart
-  })
+  const settings = await getScheduleSettings()
+  
+  // checkAvailability returns true if available, so return the opposite for conflict
+  return !checkAvailability(time, durationMinutes, existing, settings, excludeId)
 }

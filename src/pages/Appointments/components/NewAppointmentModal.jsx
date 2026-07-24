@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { format } from 'date-fns'
 import { useForm, Controller } from 'react-hook-form'
@@ -9,6 +9,7 @@ import { useClients } from '@/hooks/useClients'
 import { useServices } from '@/hooks/useServices'
 import { useCreateAppointment, useUpdateAppointmentDetails } from '@/hooks/useAppointments'
 import { useAuth } from '@/context/AuthContext'
+import { useScheduleSettings } from '@/hooks/useScheduleSettings'
 import { checkAppointmentConflict } from '@/services/appointments/appointmentsService'
 import { BUSINESS_HOURS, USER_ROLES } from '@/constants/app'
 import { validateAppointmentDateTime } from '@/utils/dateValidation'
@@ -18,50 +19,51 @@ import Input from '@/components/ui/Input'
 import TimeSelect from '@/components/ui/TimeSelect'
 import { cn } from '@/utils/cn'
 
-const schema = z.object({
-  clientId: z.string().min(1, 'Seleccioná un cliente'),
-  serviceId: z.string().min(1, 'Seleccioná un servicio'),
-  date: z.string().min(1, 'Seleccioná una fecha'),
-  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Hora inválida (HH:mm)')
-}).superRefine((data, ctx) => {
-  if (!data.date || !data.time) return
-  
-  const [year, month, day] = data.date.split('-').map(Number)
-  const [hours, minutes] = data.time.split(':').map(Number)
-  
-  const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
-  
-  // Validate day of week
-  if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
-    ctx.addIssue({
-      path: ['date'],
-      code: z.ZodIssueCode.custom,
-      message: 'El salón no atiende este día',
-    })
-  }
-
-  // Validate time range
-  if (data.time < BUSINESS_HOURS.START || data.time > BUSINESS_HOURS.END) {
-    ctx.addIssue({
-      path: ['time'],
-      code: z.ZodIssueCode.custom,
-      message: `El horario de atención es de ${BUSINESS_HOURS.START} a ${BUSINESS_HOURS.END}`,
-    })
-  }
-
-  // NOTA: La validación de turnos en el pasado se maneja en onSubmit
-  // según el rol del usuario (admin puede agendar en pasado, cliente no).
-})
-
 function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appointmentToEdit = null }) {
   const { role } = useAuth()
   const { data: clients, isLoading: loadingClients } = useClients()
   const { data: services, isLoading: loadingServices } = useServices()
   const { mutateAsync: createAppointment, isPending: isCreating } = useCreateAppointment()
   const { mutateAsync: updateAppointment, isPending: isUpdating } = useUpdateAppointmentDetails()
+  const { data: settings } = useScheduleSettings()
   
   const isEditing = !!appointmentToEdit
   const isPending = isCreating || isUpdating
+
+  // Build schema dynamically based on settings
+  const schema = React.useMemo(() => {
+    const currentSettings = settings || { openingTime: '07:00', closingTime: '19:00' }
+    return z.object({
+      clientId: z.string().min(1, 'Seleccioná un cliente'),
+      serviceId: z.string().min(1, 'Seleccioná un servicio'),
+      date: z.string().min(1, 'Seleccioná una fecha'),
+      time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Hora inválida (HH:mm)')
+    }).superRefine((data, ctx) => {
+      if (!data.date || !data.time) return
+      
+      const [year, month, day] = data.date.split('-').map(Number)
+      const [hours, minutes] = data.time.split(':').map(Number)
+      const appointmentTime = new Date(year, month - 1, day, hours, minutes, 0)
+      
+      // Validate day of week
+      if (!BUSINESS_HOURS.DAYS.includes(appointmentTime.getDay())) {
+        ctx.addIssue({
+          path: ['date'],
+          code: z.ZodIssueCode.custom,
+          message: 'El salón no atiende este día',
+        })
+      }
+
+      // Validate time range
+      if (data.time < currentSettings.openingTime || data.time > currentSettings.closingTime) {
+        ctx.addIssue({
+          path: ['time'],
+          code: z.ZodIssueCode.custom,
+          message: `El horario de atención es de ${currentSettings.openingTime} a ${currentSettings.closingTime}`,
+        })
+      }
+    })
+  }, [settings])
 
   const getEditDateStr = () => {
     if (!appointmentToEdit || !appointmentToEdit.date) return format(initialDate, 'yyyy-MM-dd')
@@ -243,9 +245,9 @@ function NewAppointmentModal({ isOpen, onClose, initialDate, initialTime, appoin
             render={({ field }) => (
               <TimeSelect
                 label="Hora del turno"
-                startHour={7}
-                endHour={20}
-                stepMinutes={15}
+                startHour={settings ? parseInt(settings.openingTime.split(':')[0], 10) : 7}
+                endHour={settings ? parseInt(settings.closingTime.split(':')[0], 10) : 20}
+                stepMinutes={settings?.slotInterval || 15}
                 error={errors.time?.message}
                 {...field}
               />
