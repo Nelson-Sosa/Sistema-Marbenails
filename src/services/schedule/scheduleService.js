@@ -54,7 +54,7 @@ export function generateTimeSlots(openingTime, closingTime, interval) {
   const startMin = toMinutes(openingTime)
   const endMin = toMinutes(closingTime)
   
-  for (let m = startMin; m < endMin; m += interval) {
+  for (let m = startMin; m <= endMin; m += interval) {
     const h = Math.floor(m / 60)
     const min = m % 60
     const label = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`
@@ -89,8 +89,8 @@ export function checkAvailability(time, durationMinutes, existingAppointments, s
   const closingMin = toMinutes(settings.closingTime)
   const openingMin = toMinutes(settings.openingTime)
 
-  // Validate business hours
-  if (newStart < openingMin || newEnd > closingMin) {
+  // Validate business hours (allow starting exactly at closing time)
+  if (newStart < openingMin || newStart > closingMin) {
     return false
   }
 

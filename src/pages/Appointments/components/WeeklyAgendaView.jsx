@@ -118,7 +118,7 @@ export default function WeeklyAgendaView() {
   const SLOT_INTERVAL = settings?.slotInterval || 30
   const BUSINESS_START_MIN = settings ? toMinutes(settings.openingTime) : 420 // 07:00
   const BUSINESS_END_MIN = settings ? toMinutes(settings.closingTime) : 1140 // 19:00
-  const TOTAL_SLOTS = Math.floor((BUSINESS_END_MIN - BUSINESS_START_MIN) / SLOT_INTERVAL)
+  const TOTAL_SLOTS = Math.floor((BUSINESS_END_MIN - BUSINESS_START_MIN) / SLOT_INTERVAL) + 1
 
   // Dynamic time slots based on settings
   const timeSlots = useMemo(() => {
