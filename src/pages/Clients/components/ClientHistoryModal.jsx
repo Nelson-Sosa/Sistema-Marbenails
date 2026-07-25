@@ -12,6 +12,9 @@ import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
 import Badge from '@/components/ui/Badge'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import { useClientWorks } from '@/hooks/useWorks'
+import WorkCard from '@/pages/Gallery/components/WorkCard'
+import GalleryDetailModal from '@/pages/Gallery/components/GalleryDetailModal'
 
 function getAptDate(apt) {
   if (apt.date?.toDate) return apt.date.toDate()
@@ -21,10 +24,12 @@ function getAptDate(apt) {
 
 function ClientHistoryModal({ isOpen, onClose, client }) {
   const { data: appointments, isLoading } = useClientHistory(client?.id)
+  const { data: works, isLoading: isLoadingWorks } = useClientWorks(client?.id)
   const { data: benefitsSettings } = useBenefitsSettings()
   const redeemMutation = useRedeemFreeService()
   const { user } = useAuth()
   const [confirmRedeem, setConfirmRedeem] = useState(false)
+  const [selectedWork, setSelectedWork] = useState(null)
 
   const metrics = useMemo(() => {
     if (!appointments) {
@@ -152,6 +157,30 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
               </div>
             )}
 
+            {/* ── Client Works / Trabajos ────────────────────────────────── */}
+            <div>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-text-muted">
+                Trabajos Realizados
+              </h3>
+              
+              {isLoadingWorks ? (
+                <div className="flex h-32 items-center justify-center">
+                  <Spinner size="sm" />
+                </div>
+              ) : works?.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+                  {works.map((work) => (
+                    <WorkCard key={work.id} work={work} onClick={setSelectedWork} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex h-32 flex-col items-center justify-center rounded-xl border border-dashed border-brand-pastel bg-brand-pastel/10">
+                  <Sparkles className="mb-2 h-6 w-6 text-brand-text-muted opacity-50" />
+                  <p className="text-sm text-brand-text-muted">No tiene fotos de trabajos registradas</p>
+                </div>
+              )}
+            </div>
+
             {/* ── Service History ────────────────────────────────────────── */}
             <div>
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-text-muted">
@@ -231,6 +260,13 @@ function ClientHistoryModal({ isOpen, onClose, client }) {
             <div className="flex justify-end">
               <Button variant="ghost" onClick={onClose}>Cerrar</Button>
             </div>
+
+            {/* ── Gallery Detail Modal ───────────────────────────────────── */}
+            <GalleryDetailModal
+              isOpen={!!selectedWork}
+              onClose={() => setSelectedWork(null)}
+              work={selectedWork}
+            />
           </div>
         )}
       </div>
