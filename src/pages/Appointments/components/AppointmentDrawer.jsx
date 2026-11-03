@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Clock, Calendar, Scissors, Camera } from 'lucide-react'
+import { X, Clock, Calendar, Scissors, Camera, Phone, MessageCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { APPOINTMENT_STATUS, STATUS_CONFIG } from '@/constants/app'
@@ -33,6 +33,8 @@ export default function AppointmentDrawer({ appointment, isOpen, onClose, onEdit
   const endTimeStr = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
   const formattedDate = format(aptDate, "EEEE d 'de' MMMM 'del' yyyy", { locale: es })
 
+  const cleanPhone = appointment.clientPhone ? appointment.clientPhone.replace(/\D/g, '') : null
+
   return (
     <>
       {isOpen && (
@@ -44,7 +46,7 @@ export default function AppointmentDrawer({ appointment, isOpen, onClose, onEdit
       )}>
         {/* Header */}
         <div className="flex items-center justify-between border-b border-brand-border px-4 py-3 shrink-0">
-          <h2 className="text-lg font-bold text-brand-text truncate">{appointment.clientName}</h2>
+          <h2 className="text-lg font-bold text-brand-text truncate">{appointment.clientName || 'Cliente'}</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 text-brand-text-muted hover:bg-brand-pastel/30 hover:text-brand-text">
             <X className="h-5 w-5" />
           </button>
@@ -69,6 +71,27 @@ export default function AppointmentDrawer({ appointment, isOpen, onClose, onEdit
               ))}
             </select>
           </div>
+
+          {/* Client Phone (if available) */}
+          {appointment.clientPhone && (
+            <div className="flex items-center justify-between rounded-xl border border-brand-border bg-brand-pastel/20 p-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Phone className="h-4 w-4 text-brand-primary shrink-0" />
+                <span className="text-sm font-medium text-brand-text truncate">{appointment.clientPhone}</span>
+              </div>
+              {cleanPhone && (
+                <a
+                  href={`https://wa.me/${cleanPhone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 rounded-lg bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25 transition-colors shrink-0"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  WhatsApp
+                </a>
+              )}
+            </div>
+          )}
 
           {/* Service */}
           <div className="flex items-start gap-3">

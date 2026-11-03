@@ -172,7 +172,7 @@ export default function WeeklyAgendaView() {
         setIsModalOpen(true)
       }
     },
-    [appointmentsByDay]
+    [appointmentsByDay, SLOT_INTERVAL]
   )
 
   const handleAppointmentClick = useCallback((appointment) => {
@@ -303,7 +303,7 @@ export default function WeeklyAgendaView() {
 
             {/* ── Scrollable Body ───────────────────────────────────────── */}
             <div className="flex relative">
-              {/* Time gutter (sticky left) — cada fila de 15 minutos muestra su hora exacta */}
+              {/* Time gutter (sticky left) */}
               <div className="sticky left-0 z-20 w-20 flex-shrink-0 bg-brand-card">
                 {timeSlots.map((slot) => (
                   <div
@@ -340,7 +340,7 @@ export default function WeeklyAgendaView() {
                     className="flex-1 relative border-r border-brand-border last:border-r-0 min-w-[100px] lg:min-w-[130px]"
                     style={{ height: totalHeight }}
                   >
-                    {/* Background grid — each 15-min block is a click target */}
+                    {/* Background grid */}
                     {timeSlots.map((slot, si) => (
                       <div
                         key={slot.startMin}
@@ -354,7 +354,7 @@ export default function WeeklyAgendaView() {
                       />
                     ))}
 
-                    {/* Appointment blocks — absolutely positioned, compact UI */}
+                    {/* Appointment blocks */}
                     {dayAppts
                       .filter(apt => {
                         if (NON_BLOCKING_STATUSES.has(apt.status)) return false
@@ -368,10 +368,11 @@ export default function WeeklyAgendaView() {
                         const top = ((aptStartMin - BUSINESS_START_MIN) / SLOT_INTERVAL) * rowHeight
                         const height = Math.min(blocks * rowHeight, totalHeight - top)
                         const visible = height >= rowHeight * 0.5
-                        const showContent = blocks >= 2
 
                         const endMin = aptStartMin + safeDuration
                         const endTimeStr = `${String(Math.floor(endMin / 60)).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`
+                        const displayName = apt.clientName || 'Cliente'
+                        const isSingleSlot = blocks <= 1
 
                         if (!visible || height <= 0) return null
 
@@ -382,44 +383,59 @@ export default function WeeklyAgendaView() {
                               e.stopPropagation()
                               handleAppointmentClick(apt)
                             }}
+                            title={`${displayName} - ${apt.serviceName || ''} (${apt.time} → ${endTimeStr})`}
                             className={cn(
-                              'absolute left-0.5 right-0.5 border-l-[3px] overflow-hidden cursor-pointer bg-slate-900 transition-shadow hover:shadow-lg hover:shadow-black/20 z-10',
+                              'absolute left-0.5 right-0.5 border-l-[3px] rounded-[3px] overflow-hidden cursor-pointer bg-slate-900 transition-all hover:ring-1 hover:ring-brand-primary hover:z-20 z-10',
                               STATUS_CELL_STYLES[apt.status] || 'border-l-slate-600'
                             )}
                             style={{
                               top: `${top}px`,
                               height: `${height}px`,
-                              minHeight: `${Math.max(rowHeight, 18)}px`,
+                              minHeight: `${Math.max(rowHeight, 20)}px`,
                             }}
                           >
                             <div className={cn('absolute inset-0', STATUS_BG_TINTS[apt.status])} />
 
-                            {showContent && (
-                              <div className="relative z-10 flex flex-col h-full px-1 lg:px-1.5 py-0.5 lg:py-1 min-h-0">
-                                <span className="truncate text-[10px] lg:text-xs font-semibold text-white leading-tight">
-                                  {apt.clientName}
+                            {/* Appointment content — ALWAYS shows client name */}
+                            <div className="relative z-10 flex flex-col justify-center h-full px-1.5 py-0.5 min-h-0">
+                              <div className="flex items-center justify-between gap-1 min-w-0">
+                                <span className="truncate text-[11px] lg:text-xs font-bold text-white leading-tight">
+                                  {displayName}
                                 </span>
-
-                                <div className="flex-1 min-h-0" />
-
-                                <div className="flex items-baseline gap-1">
-                                  <span className="text-[9px] lg:text-[10px] font-medium text-slate-400 leading-none">
+                                {isSingleSlot && (
+                                  <span className="shrink-0 text-[8px] lg:text-[9px] text-slate-300 font-medium">
                                     {apt.time}
                                   </span>
-                                  <span className="text-[8px] lg:text-[9px] text-slate-600 leading-none">→</span>
-                                  <span className="text-[9px] lg:text-[10px] text-slate-400 leading-none">
-                                    {endTimeStr}
-                                  </span>
-                                </div>
-
-                                <span className={cn(
-                                  'self-start mt-px rounded-sm px-1 py-px text-[8px] lg:text-[9px] font-medium leading-tight',
-                                  STATUS_CHIP_STYLES[apt.status]
-                                )}>
-                                  {STATUS_CONFIG[apt.status]?.label || ''}
-                                </span>
+                                )}
                               </div>
-                            )}
+
+                              {!isSingleSlot && (
+                                <>
+                                  <span className="truncate text-[9px] lg:text-[10px] text-slate-300 leading-tight">
+                                    {apt.serviceName}
+                                  </span>
+
+                                  <div className="flex items-baseline gap-1 mt-auto pt-0.5">
+                                    <span className="text-[8px] lg:text-[9px] font-medium text-slate-400 leading-none">
+                                      {apt.time}
+                                    </span>
+                                    <span className="text-[7px] lg:text-[8px] text-slate-500 leading-none">→</span>
+                                    <span className="text-[8px] lg:text-[9px] text-slate-400 leading-none">
+                                      {endTimeStr}
+                                    </span>
+                                  </div>
+
+                                  {blocks >= 3 && (
+                                    <span className={cn(
+                                      'self-start mt-0.5 rounded-sm px-1 py-px text-[7px] lg:text-[8px] font-medium leading-tight',
+                                      STATUS_CHIP_STYLES[apt.status]
+                                    )}>
+                                      {STATUS_CONFIG[apt.status]?.label || ''}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         )
                       })}
