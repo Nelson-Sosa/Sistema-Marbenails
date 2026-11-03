@@ -66,6 +66,7 @@ export async function getAppointmentsByDateRange(start, end) {
 
 /**
  * Create a new appointment.
+ * Supports both registered users (clientId = auth.uid) and guests (clientId = null).
  * @param {Object} data
  * @returns {Promise<string>} new document ID
  */
@@ -75,7 +76,7 @@ export async function createAppointment(data) {
   preciseDate.setHours(hours, minutes, 0, 0)
 
   const payload = {
-    clientId: data.clientId,
+    clientId: data.clientId ?? null,
     serviceId: data.serviceId,
     professionalId: data.professionalId ?? DEFAULT_PROFESSIONAL_ID,
     date: Timestamp.fromDate(preciseDate),
@@ -100,13 +101,17 @@ export async function createAppointment(data) {
     await createIncomeEntry({ id: ref.id, ...payload })
   }
 
-  createNotification({
-    title: 'Nuevo turno',
-    message: `${payload.clientName} reservó ${payload.serviceName}`,
-    type: NOTIFICATION_TYPES.APPOINTMENT_CREATED,
-    entityId: ref.id,
-    entityType: 'appointment',
-  })
+  try {
+    await createNotification({
+      title: 'Nuevo turno',
+      message: `${payload.clientName} reservó ${payload.serviceName}`,
+      type: NOTIFICATION_TYPES.APPOINTMENT_CREATED,
+      entityId: ref.id,
+      entityType: 'appointment',
+    })
+  } catch (err) {
+    console.error('Error al registrar notificación de turno:', err)
+  }
 
   return ref.id
 }
@@ -145,13 +150,17 @@ export async function updateAppointmentStatus(id, newStatus, extraData = {}) {
     const snap = await getDoc(ref)
     if (snap.exists()) {
       const data = snap.data()
-      createNotification({
-        title: 'Turno cancelado',
-        message: `${data.clientName || 'Un cliente'} canceló su turno`,
-        type: NOTIFICATION_TYPES.APPOINTMENT_CANCELLED,
-        entityId: id,
-        entityType: 'appointment',
-      })
+      try {
+        await createNotification({
+          title: 'Turno cancelado',
+          message: `${data.clientName || 'Un cliente'} canceló su turno`,
+          type: NOTIFICATION_TYPES.APPOINTMENT_CANCELLED,
+          entityId: id,
+          entityType: 'appointment',
+        })
+      } catch (err) {
+        console.error('Error al registrar notificación de cancelación:', err)
+      }
     }
   }
 }
@@ -186,13 +195,17 @@ export async function updateAppointmentDetails(id, data) {
   await updateDoc(ref, payload)
 
   if (beforeData) {
-    createNotification({
-      title: 'Turno actualizado',
-      message: `Se modificó un turno de ${beforeData.clientName || 'un cliente'}`,
-      type: NOTIFICATION_TYPES.APPOINTMENT_UPDATED,
-      entityId: id,
-      entityType: 'appointment',
-    })
+    try {
+      await createNotification({
+        title: 'Turno actualizado',
+        message: `Se modificó un turno de ${beforeData.clientName || 'un cliente'}`,
+        type: NOTIFICATION_TYPES.APPOINTMENT_UPDATED,
+        entityId: id,
+        entityType: 'appointment',
+      })
+    } catch (err) {
+      console.error('Error al registrar notificación de actualización:', err)
+    }
   }
 }
 
@@ -221,6 +234,7 @@ export async function getAppointmentById(id) {
  * @returns {Promise<Array>}
  */
 export async function getAppointmentsByClient(clientId) {
+  if (!clientId) return []
   // We use only 'where' and sort locally to avoid requiring a Firebase composite index
   const q = query(
     appointmentsRef(),

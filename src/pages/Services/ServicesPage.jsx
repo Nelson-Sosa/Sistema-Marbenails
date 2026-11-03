@@ -1,12 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Scissors, Plus, FolderKanban } from 'lucide-react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useAuth } from '@/hooks/useAuth'
-import { usePendingAction } from '@/hooks/usePendingAction'
 import { useServices, useAllServices } from '@/hooks/useServices'
 import { useCategories } from '@/hooks/useServiceCategories'
-import { ROUTES } from '@/routes/routes'
 import { USER_ROLES } from '@/constants/app'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
@@ -14,24 +12,39 @@ import CategoryCard from './components/CategoryCard'
 import ServiceModal from './components/ServiceModal'
 import CategoryModal from './components/CategoryModal'
 import LocationSection from '@/components/common/LocationSection'
+import UserBookingModal from '@/pages/Appointments/components/UserBookingModal'
 
 function ServicesPage() {
   usePageTitle('Servicios')
-  const navigate = useNavigate()
   const location = useLocation()
 
-  const { isAuthenticated, role } = useAuth()
+  const { role } = useAuth()
   const isAdmin = role === USER_ROLES.ADMIN
 
-  const { savePendingAction } = usePendingAction()
   const [serviceModalOpen, setServiceModalOpen] = useState(false)
   const [selectedService, setSelectedService] = useState(null)
   const [preSelectedCategoryId, setPreSelectedCategoryId] = useState(null)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  const { data: rawServices, isLoading } = isAdmin ? useAllServices() : useServices()
+  // Booking Modal State (Supports both Guests & Logged-in Users)
+  const [bookingModalOpen, setBookingModalOpen] = useState(() => Boolean(location.state?.selectedServiceId))
+  const [bookingServiceId, setBookingServiceId] = useState(() => location.state?.selectedServiceId || null)
+
+  // Unconditional hook calls per React rules
+  const allServicesQuery = useAllServices()
+  const activeServicesQuery = useServices()
+  const rawServices = isAdmin ? allServicesQuery.data : activeServicesQuery.data
+  const isLoading = isAdmin ? allServicesQuery.isLoading : activeServicesQuery.isLoading
+
   const { data: categories } = useCategories()
+
+  // Clean up state if navigated with selectedServiceId
+  useEffect(() => {
+    if (location.state?.selectedServiceId) {
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state?.selectedServiceId])
 
   const grouped = useMemo(() => {
     if (!rawServices) return { categories: [], uncategorized: [] }
@@ -58,12 +71,13 @@ function ServicesPage() {
   }, [rawServices, categories, isAdmin])
 
   const handleBookService = (serviceId) => {
-    if (!isAuthenticated) {
-      savePendingAction({ type: 'BOOK_SERVICE', payload: { serviceId } })
-      navigate(ROUTES.LOGIN, { state: { from: location } })
-    } else {
-      navigate(ROUTES.APPOINTMENTS, { state: { selectedServiceId: serviceId } })
-    }
+    setBookingServiceId(serviceId)
+    setBookingModalOpen(true)
+  }
+
+  const handleCloseBookingModal = () => {
+    setBookingModalOpen(false)
+    setTimeout(() => setBookingServiceId(null), 300)
   }
 
   const handleEditService = (service) => {
@@ -183,7 +197,14 @@ function ServicesPage() {
       {/* ── Location Section ────────────────────────────────────────────────── */}
       <LocationSection />
 
-      {/* ── Service Modal ─────────────────────────────────────────────────── */}
+      {/* ── User Booking Modal (Guests & Logged-in Clients) ─────────────────── */}
+      <UserBookingModal
+        isOpen={bookingModalOpen}
+        onClose={handleCloseBookingModal}
+        defaultServiceId={bookingServiceId}
+      />
+
+      {/* ── Service Modal (Admin Only) ─────────────────────────────────────── */}
       {(serviceModalOpen || selectedService) && (
         <ServiceModal
           isOpen={serviceModalOpen || !!selectedService}

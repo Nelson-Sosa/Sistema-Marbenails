@@ -16,10 +16,10 @@ export default function GalleryDetailModal({ isOpen, onClose, work }) {
   if (!work) return null
 
   const handleBookNow = () => {
-    // Navigate to appointments page and pass the selected service ID
-    // so the booking flow can auto-select it.
-    navigate(ROUTES.APPOINTMENTS, {
-      state: { preselectedServiceId: work.serviceId },
+    // Navigate to services page and pass the selected service ID
+    // so the booking modal can auto-open directly.
+    navigate(ROUTES.SERVICES, {
+      state: { selectedServiceId: work.serviceId },
     })
     onClose()
   }
@@ -84,7 +84,7 @@ export default function GalleryDetailModal({ isOpen, onClose, work }) {
               Reservar este servicio
             </Button>
             <p className="mt-2 text-center text-xs text-brand-text-muted">
-              Serás redirigida al calendario para elegir fecha y hora.
+              Podrás elegir fecha y hora, e iniciar sesión o agendar como invitada.
             </p>
           </div>
         </div>
