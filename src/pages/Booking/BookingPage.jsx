@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { startOfDay } from 'date-fns'
 import {
   CalendarPlus,
-  Scissors,
   CheckCircle,
   RefreshCw,
   ArrowRight,
@@ -87,12 +86,6 @@ export default function BookingPage() {
   const handleSelectService = (serviceId) => {
     setSelectedServiceId(serviceId)
     // Default to today when selecting a service, reset time
-    setSelectedDate(startOfDay(new Date()))
-    setSelectedTime(null)
-  }
-
-  const handleChangeService = () => {
-    setSelectedServiceId(null)
     setSelectedDate(startOfDay(new Date()))
     setSelectedTime(null)
   }
@@ -317,38 +310,7 @@ export default function BookingPage() {
                 ))}
               </div>
             </div>
-          ) : (
-            /* Selected Service Compact Header */
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-brand-primary/40 bg-brand-primary/5 p-4 transition-all">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-white shadow-sm shrink-0">
-                  <Scissors className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-brand-primary uppercase tracking-wider">
-                      Servicio seleccionado
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-brand-text text-base sm:text-lg truncate">
-                    {selectedService.name}
-                  </h3>
-                  <p className="text-xs text-brand-text-muted">
-                    {selectedService.duration} min · <strong className="text-emerald-400">{formatCurrency(selectedService.price)}</strong>
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleChangeService}
-                className="self-end sm:self-auto shrink-0 text-xs"
-              >
-                Cambiar servicio
-              </Button>
-            </div>
-          )}
+          ) : null}
 
           {/* ══════════════════════════════════════════════════════════════════
               PASO 2: SELECCIONAR DÍA (SE DESPLIEGA AUTOMÁTICAMENTE)
