@@ -33,13 +33,17 @@ export default function BookingConfirmation({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const nameInputRef = useRef(null)
 
-  // Smooth focus on guest name after scrolling into view
+  // On desktop / notebook, auto-focus guest name.
+  // On mobile (< 640px), do NOT force auto-focus so the virtual keyboard does not abruptly pop up and cover the form.
   useEffect(() => {
     if (!isAuthenticated) {
-      const timer = setTimeout(() => {
-        nameInputRef.current?.focus({ preventScroll: true })
-      }, 350)
-      return () => clearTimeout(timer)
+      const isMobile = window.innerWidth < 640
+      if (!isMobile) {
+        const timer = setTimeout(() => {
+          nameInputRef.current?.focus({ preventScroll: true })
+        }, 300)
+        return () => clearTimeout(timer)
+      }
     }
   }, [isAuthenticated, date, time])
 
@@ -184,14 +188,20 @@ export default function BookingConfirmation({
       {/* ── Confirmation Form (Guest or Authenticated) ────────────────────── */}
       <form onSubmit={handleConfirm} className="space-y-4">
         {isAuthenticated ? (
-          <div className="flex items-center gap-3 rounded-xl border border-brand-border/60 bg-brand-pastel/15 p-3 text-xs sm:text-sm">
+          <div
+            id="contact-form-section"
+            className="flex items-center gap-3 rounded-xl border border-brand-border/60 bg-brand-pastel/15 p-3 text-xs sm:text-sm scroll-mt-6"
+          >
             <User className="h-4 w-4 text-brand-primary shrink-0" />
             <p className="text-brand-text">
               Reservando a nombre de: <strong>{userProfile?.displayName || user?.displayName || user?.email}</strong>
             </p>
           </div>
         ) : (
-          <div className="space-y-3.5">
+          <div
+            id="contact-form-section"
+            className="space-y-3.5 scroll-mt-6"
+          >
             <div className="flex items-center gap-2 text-xs font-semibold text-brand-text">
               <User className="h-4 w-4 text-brand-primary" />
               <span>Tus datos de contacto (reserva como invitada)</span>
