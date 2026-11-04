@@ -45,17 +45,30 @@ export default function BookingPage() {
   // Ref to automatically scroll to confirmation section when a time is selected
   const confirmationRef = useRef(null)
 
-  // Auto-scroll to confirmation section when time is chosen
-  // On mobile (< 640px) use 'center' so the full card is visible and not clipped at the top
+  // Auto-scroll to confirmation section when time is chosen.
+  // On mobile (< 640px): first bring the card into view, then scroll
+  // an extra offset so the guest input fields sit above the virtual keyboard.
   useEffect(() => {
     if (selectedTime && confirmationRef.current) {
       const timer = setTimeout(() => {
         const isMobile = window.innerWidth < 640
+
         confirmationRef.current?.scrollIntoView({
           behavior: 'smooth',
-          block: isMobile ? 'center' : 'start',
+          block: 'start',
         })
-      }, 60)
+
+        // On mobile, the virtual keyboard covers ~50 % of the screen.
+        // A second scroll after the first animation settles pushes the
+        // inputs into the visible area above the keyboard.
+        if (isMobile) {
+          const extraScroll = setTimeout(() => {
+            const mainContent = document.getElementById('main-content')
+            mainContent?.scrollBy({ top: 260, behavior: 'smooth' })
+          }, 380)
+          return () => clearTimeout(extraScroll)
+        }
+      }, 80)
       return () => clearTimeout(timer)
     }
   }, [selectedTime])
