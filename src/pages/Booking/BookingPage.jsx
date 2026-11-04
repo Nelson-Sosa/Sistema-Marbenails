@@ -47,12 +47,14 @@ export default function BookingPage() {
   const confirmationRef = useRef(null)
 
   // Auto-scroll to confirmation section when time is chosen
+  // On mobile (< 640px) use 'center' so the full card is visible and not clipped at the top
   useEffect(() => {
     if (selectedTime && confirmationRef.current) {
       const timer = setTimeout(() => {
+        const isMobile = window.innerWidth < 640
         confirmationRef.current?.scrollIntoView({
           behavior: 'smooth',
-          block: 'start',
+          block: isMobile ? 'center' : 'start',
         })
       }, 60)
       return () => clearTimeout(timer)
