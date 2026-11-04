@@ -120,6 +120,22 @@ export default function BookingPage() {
     setSelectedTime(null)
   }
 
+  // Build a WhatsApp confirmation URL with booking details pre-filled
+  const buildWhatsAppUrl = (booking) => {
+    const PHONE_NUMBER = '595984925322'
+    const msg = [
+      '¡Hola! 😊 Acabo de reservar un turno y quería confirmarlo.',
+      '',
+      `✂️ *Servicio:* ${booking.serviceName}`,
+      `📅 *Fecha y Horario:* ${booking.dateFormatted} · ${booking.time} hs`,
+      `👤 *Nombre:* ${booking.clientName}`,
+      `💰 *Total a abonar en el salón:* ${formatCurrency(booking.price)}`,
+      '',
+      '¡Muchas gracias! 🩷',
+    ].join('\n')
+    return `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(msg)}`
+  }
+
   const isLoading = loadingServices || loadingSettings
 
   // ── Success Screen ────────────────────────────────────────────────────────
@@ -167,6 +183,18 @@ export default function BookingPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          {/* WhatsApp confirmation button */}
+          <a
+            href={buildWhatsAppUrl(confirmedBooking)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg active:scale-95"
+            style={{ backgroundColor: '#25D366' }}
+          >
+            <img src="/whatsapp.png" alt="WhatsApp" className="h-5 w-5 object-contain" />
+            Confirmar por WhatsApp
+          </a>
+
           <Button variant="secondary" onClick={handleBookAnother} leftIcon={<RefreshCw className="h-4 w-4" />}>
             Agendar otro turno
           </Button>
