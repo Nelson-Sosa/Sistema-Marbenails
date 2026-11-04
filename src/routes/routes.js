@@ -7,6 +7,7 @@ export const ROUTES = {
   // Public routes
   LOGIN: '/login',
   REGISTER: '/register',
+  BOOKING: '/reservar',
 
   // Protected routes
   DASHBOARD: '/dashboard',

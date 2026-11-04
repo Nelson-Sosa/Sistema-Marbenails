@@ -1,22 +1,22 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Scissors, Plus, FolderKanban } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useAuth } from '@/hooks/useAuth'
 import { useServices, useAllServices } from '@/hooks/useServices'
 import { useCategories } from '@/hooks/useServiceCategories'
 import { USER_ROLES } from '@/constants/app'
+import { ROUTES } from '@/routes/routes'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
 import CategoryCard from './components/CategoryCard'
 import ServiceModal from './components/ServiceModal'
 import CategoryModal from './components/CategoryModal'
 import LocationSection from '@/components/common/LocationSection'
-import UserBookingModal from '@/pages/Appointments/components/UserBookingModal'
 
 function ServicesPage() {
   usePageTitle('Servicios')
-  const location = useLocation()
+  const navigate = useNavigate()
 
   const { role } = useAuth()
   const isAdmin = role === USER_ROLES.ADMIN
@@ -27,10 +27,6 @@ function ServicesPage() {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  // Booking Modal State (Supports both Guests & Logged-in Users)
-  const [bookingModalOpen, setBookingModalOpen] = useState(() => Boolean(location.state?.selectedServiceId))
-  const [bookingServiceId, setBookingServiceId] = useState(() => location.state?.selectedServiceId || null)
-
   // Unconditional hook calls per React rules
   const allServicesQuery = useAllServices()
   const activeServicesQuery = useServices()
@@ -38,13 +34,6 @@ function ServicesPage() {
   const isLoading = isAdmin ? allServicesQuery.isLoading : activeServicesQuery.isLoading
 
   const { data: categories } = useCategories()
-
-  // Clean up state if navigated with selectedServiceId
-  useEffect(() => {
-    if (location.state?.selectedServiceId) {
-      window.history.replaceState({}, document.title)
-    }
-  }, [location.state?.selectedServiceId])
 
   const grouped = useMemo(() => {
     if (!rawServices) return { categories: [], uncategorized: [] }
@@ -71,13 +60,7 @@ function ServicesPage() {
   }, [rawServices, categories, isAdmin])
 
   const handleBookService = (serviceId) => {
-    setBookingServiceId(serviceId)
-    setBookingModalOpen(true)
-  }
-
-  const handleCloseBookingModal = () => {
-    setBookingModalOpen(false)
-    setTimeout(() => setBookingServiceId(null), 300)
+    navigate(ROUTES.BOOKING, { state: { selectedServiceId: serviceId } })
   }
 
   const handleEditService = (service) => {
@@ -196,13 +179,6 @@ function ServicesPage() {
 
       {/* ── Location Section ────────────────────────────────────────────────── */}
       <LocationSection />
-
-      {/* ── User Booking Modal (Guests & Logged-in Clients) ─────────────────── */}
-      <UserBookingModal
-        isOpen={bookingModalOpen}
-        onClose={handleCloseBookingModal}
-        defaultServiceId={bookingServiceId}
-      />
 
       {/* ── Service Modal (Admin Only) ─────────────────────────────────────── */}
       {(serviceModalOpen || selectedService) && (

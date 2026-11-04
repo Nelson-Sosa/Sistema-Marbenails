@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react'
 import { CalendarDays, Plus, Phone } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAppointmentsByClient, useCancelAppointment } from '@/hooks/useAppointments'
 import { useServices } from '@/hooks/useServices'
 import { useAuth } from '@/context/AuthContext'
@@ -12,21 +11,16 @@ import { formatCurrency } from '@/utils/formatters'
 import toast from 'react-hot-toast'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
-import UserBookingModal from './UserBookingModal'
 
 export default function UserAppointmentsView() {
   const { userProfile, user } = useAuth()
   const navigate = useNavigate()
-  const location = useLocation()
 
   const { data: services } = useServices()
   const servicePriceMap = {}
   if (services) {
     services.forEach((s) => { servicePriceMap[s.id] = s.price })
   }
-  
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedServiceId, setSelectedServiceId] = useState(null)
 
   // Use the logged-in user's UID to fetch their appointments
   const clientId = userProfile?.uid || user?.uid
@@ -40,24 +34,8 @@ export default function UserAppointmentsView() {
     })
   }
 
-  // Auto-open modal if navigated from Services catalog with a selected service
-  useEffect(() => {
-    if (location.state?.selectedServiceId) {
-      setSelectedServiceId(location.state.selectedServiceId)
-      setIsModalOpen(true)
-      // Clear state so it doesn't reopen on refresh
-      window.history.replaceState({}, document.title)
-    }
-  }, [location.state])
-
-  const handleOpenModal = () => {
-    setSelectedServiceId(null)
-    setIsModalOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setTimeout(() => setSelectedServiceId(null), 300) // Clear after animation
+  const handleOpenBooking = () => {
+    navigate(ROUTES.BOOKING)
   }
 
   const getStatusBadge = (status) => {
@@ -106,7 +84,7 @@ export default function UserAppointmentsView() {
         </div>
         <Button 
           leftIcon={<Plus className="h-4 w-4" />}
-          onClick={handleOpenModal}
+          onClick={handleOpenBooking}
         >
           Reservar Turno
         </Button>
@@ -168,19 +146,13 @@ export default function UserAppointmentsView() {
             <Button 
               className="mt-4"
               variant="secondary"
-              onClick={handleOpenModal}
+              onClick={handleOpenBooking}
             >
               Reservar Turno
             </Button>
           </div>
         )}
       </div>
-
-      <UserBookingModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        defaultServiceId={selectedServiceId}
-      />
     </div>
   )
 }

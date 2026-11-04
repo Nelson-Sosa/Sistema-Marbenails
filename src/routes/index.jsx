@@ -8,6 +8,7 @@ import UserDashboardPage from '@/pages/Dashboard/UserDashboardPage'
 import AppointmentsPage from '@/pages/Appointments/AppointmentsPage'
 import ClientsPage from '@/pages/Clients/ClientsPage'
 import ServicesPage from '@/pages/Services/ServicesPage'
+import BookingPage from '@/pages/Booking/BookingPage'
 import SettingsPage from '@/pages/Settings/SettingsPage'
 import ProfilePage from '@/pages/Profile/ProfilePage'
 import WorksPage from '@/pages/Works/WorksPage'
@@ -17,18 +18,6 @@ import { ROUTES } from '@/routes/routes'
 
 /**
  * Application router configuration using React Router v7's createBrowserRouter.
- *
- * Route structure:
- * /                        → Redirects to /dashboard
- * /login                   → Public: LoginPage
- * (ProtectedRoute)
- *   (AppLayout)
- *     /dashboard           → DashboardPage
- *     /appointments        → AppointmentsPage
- *     /clients             → ClientsPage
- *     /services            → ServicesPage
- *     /settings            → SettingsPage
- * *                        → Redirects to /dashboard
  */
 export const router = createBrowserRouter([
   // ─── Root redirect ──────────────────────────────────────────────────────────
@@ -56,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.SERVICES,
         element: <ServicesPage />,
+      },
+      {
+        path: ROUTES.BOOKING,
+        element: <BookingPage />,
       },
       {
         path: ROUTES.WORKS,

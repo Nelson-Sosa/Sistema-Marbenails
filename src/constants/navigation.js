@@ -1,13 +1,13 @@
 import {
   LayoutDashboard,
   CalendarDays,
+  CalendarPlus,
   Users,
   Brush,
   Settings,
   UserCircle,
   Sparkles,
   Image as ImageIcon,
-  GalleryHorizontal,
 } from 'lucide-react'
 import { ROUTES } from '@/routes/routes'
 
@@ -67,6 +67,14 @@ export const NAV_ITEMS = [
     roles: ['admin', 'user'],
   },
   {
+    id: 'booking',
+    label: 'Reservar',
+    path: ROUTES.BOOKING,
+    icon: CalendarPlus,
+    description: 'Agendá tu turno',
+    roles: ['admin', 'user'],
+  },
+  {
     id: 'public-works',
     label: 'Trabajos',
     path: ROUTES.WORKS,
@@ -82,14 +90,6 @@ export const NAV_ITEMS = [
     description: 'Gestión de trabajos',
     roles: ['admin'],
   },
-  // {
-  //   id: 'reports',
-  //   label: 'Reportes',
-  //   path: ROUTES.REPORTS,
-  //   icon: ChartBar,
-  //   description: 'Estadísticas e ingresos',
-  //   roles: ['admin'],
-  // },
   {
     id: 'settings',
     label: 'Configuración',
